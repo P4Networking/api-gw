@@ -8,9 +8,14 @@ API 文件请参阅
 
 https://app.swaggerhub.com/apis-docs/breezestars/pisc-proto/0.1#/
 
+### Execute
+```
+./pisc-api-gw
+```
+
 ### Command
 ```
-// 编译模拟器，产生 pisc-api-gw
+// 编译模拟器，产生只能于 Linux 上执行的 pisc-api-gw
 make
 
 // 编译 proto 产生需要的代码
