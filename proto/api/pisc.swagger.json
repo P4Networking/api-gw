@@ -1,0 +1,755 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "PISC",
+    "version": "1.0",
+    "contact": {
+      "name": "PISC project",
+      "url": "https://www.edge-core.com/",
+      "email": "jimmy_ou@edge-core.com"
+    }
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/auth/login": {
+      "post": {
+        "summary": "Login Authentication",
+        "description": "Frontend send username/password to backend to authenticate the user information. Test username admin/light_admin/user/guest. Password is same as username.",
+        "operationId": "PiscService_LoginAuth",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoLoginResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/protoLoginRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/feature": {
+      "get": {
+        "description": "Description Feature",
+        "operationId": "PiscService_GetFeature",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoFeatureResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Feature"
+        ]
+      }
+    },
+    "/v1/feature/{name}": {
+      "get": {
+        "description": "Description Feature",
+        "operationId": "PiscService_GetFeature2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoFeatureResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Feature"
+        ]
+      }
+    },
+    "/v1/port": {
+      "get": {
+        "description": "Description Port",
+        "operationId": "PiscService_GetPort",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoPortResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Port"
+        ]
+      }
+    },
+    "/v1/port/{id}": {
+      "get": {
+        "description": "Description Port",
+        "operationId": "PiscService_GetPort2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoPortResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Port"
+        ]
+      }
+    },
+    "/v1/sys/cpu": {
+      "get": {
+        "summary": "CPU Information",
+        "description": "Description System Information",
+        "operationId": "PiscService_GetSystemCPUInformation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoSystemCPUInformationResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/v1/sys/disk": {
+      "get": {
+        "summary": "Disk Information",
+        "description": "Description System Information",
+        "operationId": "PiscService_GetSystemDiskInformation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoSystemDiskInformationResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/v1/sys/info": {
+      "get": {
+        "summary": "System Information",
+        "description": "Description System Information",
+        "operationId": "PiscService_GetSystemInformation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoSystemInformationResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/v1/sys/license": {
+      "get": {
+        "summary": "License",
+        "description": "Description License",
+        "operationId": "PiscService_GetLicense",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoLicenseResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/v1/sys/ram": {
+      "get": {
+        "summary": "RAM Information",
+        "description": "Description System Information",
+        "operationId": "PiscService_GetSystemRAMInformation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/protoSystemRAMInformationResponse"
+            }
+          },
+          "403": {
+            "description": "Returned when the user does not have permission to access the resource.",
+            "schema": {}
+          },
+          "404": {
+            "description": "Returned when the resource does not exist.",
+            "schema": {
+              "type": "string",
+              "format": "string"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "LicenseResponseLevel": {
+      "type": "string",
+      "enum": [
+        "EVALUATION",
+        "BASIC",
+        "ADVANCED",
+        "PRO"
+      ],
+      "default": "EVALUATION",
+      "description": " - EVALUATION: Evaluation can only use 30 days.\n - BASIC: Basic level only contain basic functions.\n - ADVANCED: Advanced level have few advance feature.\n - PRO: Pro can have all features."
+    },
+    "LoginResponseRole": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "ADMIN",
+        "LIGHT_ADMIN",
+        "USER",
+        "GUEST"
+      ],
+      "default": "UNKNOWN",
+      "description": " - UNKNOWN: Default is UNKNOWN\n - ADMIN: Administrator\n - LIGHT_ADMIN: Light administrator have less privilege.\n - USER: User can do most action.\n - GUEST: Guest can only view dashboard."
+    },
+    "PortPortType": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "COPPOER",
+        "FIBER",
+        "OTHER"
+      ],
+      "default": "UNKNOWN"
+    },
+    "PortPortVlan": {
+      "type": "string",
+      "enum": [
+        "ACCESS",
+        "TRUNK"
+      ],
+      "default": "ACCESS"
+    },
+    "PortResponsePort": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "uint64",
+          "description": "Port number."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled port."
+        },
+        "txPackets": {
+          "type": "integer",
+          "format": "uint64",
+          "description": "TX packets."
+        },
+        "rxPackets": {
+          "type": "integer",
+          "format": "uint64",
+          "description": "RX packets."
+        },
+        "txBytes": {
+          "type": "integer",
+          "format": "uint64",
+          "description": "TX bytes."
+        },
+        "rxBytes": {
+          "type": "integer",
+          "format": "uint64",
+          "description": "RX bytes."
+        },
+        "txDrop": {
+          "type": "integer",
+          "format": "uint64",
+          "description": "TX drop."
+        },
+        "rxDrop": {
+          "type": "integer",
+          "format": "uint64",
+          "description": "RX drop."
+        },
+        "type": {
+          "$ref": "#/definitions/PortPortType",
+          "description": "Port type. Copper/Fiber."
+        },
+        "macAddress": {
+          "type": "string",
+          "description": "Port MAC address."
+        },
+        "vlanMode": {
+          "$ref": "#/definitions/PortPortVlan",
+          "description": "Port vlan mode. Access/Trunk"
+        },
+        "vlanId": {
+          "type": "integer",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "description": "VLAN ID."
+        },
+        "ipAddress": {
+          "type": "string",
+          "items": {
+            "type": "string"
+          },
+          "description": "IP address."
+        }
+      },
+      "description": "Include the needed information to login.",
+      "title": "Port Struct"
+    },
+    "protoFeature": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Feature module name."
+        },
+        "description": {
+          "type": "string",
+          "description": "Feature module description."
+        },
+        "version": {
+          "type": "string",
+          "description": "Feature module version."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Enabled feature module."
+        }
+      },
+      "title": "Feature Struct"
+    },
+    "protoFeatureResponse": {
+      "type": "object",
+      "properties": {
+        "featureLists": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protoFeature"
+          },
+          "description": "feature_lists contain all features."
+        }
+      },
+      "description": "Include the information of function.",
+      "title": "Feature Response"
+    },
+    "protoLicenseResponse": {
+      "type": "object",
+      "properties": {
+        "licenseLevel": {
+          "$ref": "#/definitions/LicenseResponseLevel",
+          "description": "License level."
+        }
+      },
+      "description": "Include the information of license.",
+      "title": "License Response"
+    },
+    "protoLoginRequest": {
+      "type": "object",
+      "example": {
+        "username": "admin",
+        "password": "admin"
+      },
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The username field."
+        },
+        "password": {
+          "type": "string",
+          "description": "The password field."
+        }
+      },
+      "description": "Include the needed information to login.",
+      "title": "Login Request",
+      "required": [
+        "username",
+        "password"
+      ]
+    },
+    "protoLoginResponse": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The username field."
+        },
+        "userRole": {
+          "$ref": "#/definitions/LoginResponseRole",
+          "description": "The user role field."
+        },
+        "isSuccess": {
+          "type": "boolean",
+          "description": "The result of login."
+        }
+      },
+      "description": "Include the result of login.",
+      "title": "Login Response"
+    },
+    "protoPortResponse": {
+      "type": "object",
+      "properties": {
+        "portLists": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PortResponsePort"
+          },
+          "title": "Port lists"
+        }
+      },
+      "description": "Include the needed information to login.",
+      "title": "Port Response"
+    },
+    "protoSystemCPUInformationResponse": {
+      "type": "object",
+      "properties": {
+        "cpuUsage": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "description": "Include CPU information.",
+      "title": "CPU Information Response"
+    },
+    "protoSystemDiskInformationResponse": {
+      "type": "object",
+      "properties": {
+        "diskSpaceUsage": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "description": "Include Disk information.",
+      "title": "Disk Information Response"
+    },
+    "protoSystemInformationResponse": {
+      "type": "object",
+      "properties": {
+        "productName": {
+          "type": "string",
+          "description": "Product name."
+        },
+        "productSerialNumber": {
+          "type": "string",
+          "description": "Product serial number"
+        },
+        "systemManufacturer": {
+          "type": "string",
+          "description": "Product manufacturer.",
+          "title": "The manufacturer for system"
+        },
+        "systemManufacturingDate": {
+          "type": "string",
+          "description": "Product date."
+        },
+        "softwareVersion": {
+          "type": "string",
+          "description": "Software version."
+        },
+        "firmwareVersion": {
+          "type": "string",
+          "description": "Firmware version."
+        },
+        "hardwareVersion": {
+          "type": "string",
+          "description": "Hardware version."
+        },
+        "hardwareManufacturingDate": {
+          "type": "string",
+          "description": "Hardware product date."
+        },
+        "localMac": {
+          "type": "string",
+          "description": "MAC address of management port in OpenBMC."
+        },
+        "cpuCore": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "ramSpaceTotalGb": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "diskSpaceTotalGb": {
+          "type": "string",
+          "format": "uint64"
+        }
+      },
+      "description": "Include all system information.",
+      "title": "Information Response"
+    },
+    "protoSystemRAMInformationResponse": {
+      "type": "object",
+      "properties": {
+        "ramUsage": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      "description": "Include RAM information.",
+      "title": "RAM Information Response"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "More about PISC",
+    "url": "https://pisc.edge-core.cn"
+  }
+}

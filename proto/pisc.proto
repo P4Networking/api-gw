@@ -1,0 +1,360 @@
+syntax = "proto3";
+
+option go_package = "proto/api";
+package proto;
+
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+  info: {
+    title: "PISC";
+    version: "1.0";
+    contact: {
+      name: "PISC project";
+      url: "https://www.edge-core.com/";
+      email: "jimmy_ou@edge-core.com";
+    };
+  };
+  // Overwriting host entry breaks tests, so this is not done here.
+  external_docs: {
+    url: "https://pisc.edge-core.cn";
+    description: "More about PISC";
+  }
+  responses: {
+    key: "403";
+    value: {
+      description: "Returned when the user does not have permission to access the resource.";
+    }
+  }
+  responses: {
+    key: "404";
+    value: {
+      description: "Returned when the resource does not exist.";
+      schema: {
+        json_schema: {
+          type: STRING;
+        }
+      }
+    }
+  }
+};
+
+service PiscService {
+  rpc LoginAuth (LoginRequest) returns (LoginResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login",
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Frontend send username/password to backend to authenticate the user information. Test username admin/light_admin/user/guest. Password is same as username.";
+      summary: "Login Authentication";
+      tags: "Auth";
+    };
+  }
+
+  rpc GetSystemInformation (google.protobuf.Empty) returns (SystemInformationResponse) {
+    option (google.api.http) = {
+      get: "/v1/sys/info"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Description System Information";
+      summary: "System Information";
+      tags: "System";
+    };
+  }
+
+  rpc GetSystemCPUInformation (google.protobuf.Empty) returns (SystemCPUInformationResponse) {
+    option (google.api.http) = {
+      get: "/v1/sys/cpu"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Description System Information";
+      summary: "CPU Information";
+      tags: "System";
+    };
+  }
+
+  rpc GetSystemRAMInformation (google.protobuf.Empty) returns (SystemRAMInformationResponse) {
+    option (google.api.http) = {
+      get: "/v1/sys/ram"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Description System Information";
+      summary: "RAM Information";
+      tags: "System";
+    };
+  }
+
+  rpc GetSystemDiskInformation (google.protobuf.Empty) returns (SystemDiskInformationResponse) {
+    option (google.api.http) = {
+      get: "/v1/sys/disk"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Description System Information";
+      summary: "Disk Information";
+      tags: "System";
+    };
+  }
+
+  rpc GetFeature (NameMessage) returns (FeatureResponse) {
+    option (google.api.http) = {
+      get: "/v1/feature"
+      additional_bindings: [
+        {
+          get: "/v1/feature/{name}"
+        }
+      ]
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Description Feature";
+      tags: "Feature";
+    };
+  }
+
+  rpc GetPort (IdMessage) returns (PortResponse) {
+    option (google.api.http) = {
+      get: "/v1/port"
+      additional_bindings: [
+        {
+          get: "/v1/port/{id}"
+        }
+      ]
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Description Port";
+      tags: "Port";
+    };
+  }
+
+  rpc GetLicense (google.protobuf.Empty) returns (LicenseResponse) {
+    option (google.api.http) = {
+      get: "/v1/sys/license"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      description: "Description License";
+      summary: "License";
+      tags: "System";
+    };
+  }
+
+}
+
+message IdMessage {
+  uint64 id = 1;
+}
+
+message NameMessage {
+  string name = 1;
+}
+
+// LoginRequest contain username and password.
+message LoginRequest {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Login Request"
+      description: "Include the needed information to login."
+      required: ["username", "password"]
+    }
+    example: "{\"username\": \"admin\",\"password\":\"admin\"}"
+  };
+
+  // Username.
+  string username = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The username field."}];
+  // Password.
+  string password = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The password field."}];
+}
+
+// LoginResponse contain username, role and login result.
+message LoginResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Login Response"
+      description: "Include the result of login."
+    }
+  };
+  enum Role {
+    // Default is UNKNOWN
+    UNKNOWN = 0;
+    // Administrator
+    ADMIN = 1;
+    // Light administrator have less privilege.
+    LIGHT_ADMIN = 2;
+    // User can do most action.
+    USER = 3;
+    // Guest can only view dashboard.
+    GUEST = 4;
+  }
+  // Username.
+  string username = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The username field."}];
+  // User role.
+  Role user_role = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The user role field."}];
+  // Login result.
+  bool is_success = 3  [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "The result of login."}];
+}
+
+// SystemInformationResponse contain basic system information.
+message SystemInformationResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Information Response"
+      description: "Include all system information."
+    }
+  };
+  // Product name.
+  string product_name = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Product name."}];
+  // Product serial number.
+  string product_serial_number = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Product serial number"}];
+  // The manufacturer for system
+  string system_manufacturer = 3  [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Product manufacturer."}];
+  // Hardware manufacturing date.
+  string system_manufacturing_date = 4  [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Product date."}];
+  // The version of software.
+  string software_version = 5 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Software version."}];
+  // The version of firmware.
+  string firmware_version = 6 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Firmware version."}];
+  // The version of hardware.
+  string hardware_version = 7 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Hardware version."}];
+  // The date of hardware manufactured.
+  string hardware_manufacturing_date = 8 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Hardware product date."}];
+  // The MAC address of eth0 in OpenBMC.
+  string local_mac = 9  [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "MAC address of management port in OpenBMC."}];
+  uint32 cpu_core = 10;
+  uint64 ram_space_total_gb = 11;
+  uint64 disk_space_total_gb = 12;
+}
+
+message SystemCPUInformationResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "CPU Information Response"
+      description: "Include CPU information."
+    }
+  };
+  repeated uint32 cpu_usage = 1;
+}
+
+message SystemRAMInformationResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "RAM Information Response"
+      description: "Include RAM information."
+    }
+  };
+  uint32 ram_usage = 1;
+}
+
+message SystemDiskInformationResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Disk Information Response"
+      description: "Include Disk information."
+    }
+  };
+  uint32 disk_space_usage = 1;
+}
+
+message Feature {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Feature Struct"
+    }
+  };
+  // Feature name.
+  string name = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Feature module name."}];
+  // Feature description.
+  string description = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Feature module description."}];
+  // Feature version.
+  string version = 3  [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Feature module version."}];
+  // Enabled feature.
+  bool enabled = 4  [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Enabled feature module."}];
+}
+
+// FeatureListResponse contain all features in list.
+message FeatureResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Feature Response"
+      description: "Include the information of function."
+    }
+  };
+  // feature_lists contain all features.
+  repeated Feature feature_lists = 1;
+}
+
+message PortResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "Port Response"
+      description: "Include the needed information to login."
+    }
+  };
+  message Port {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+      json_schema: {
+        title: "Port Struct"
+        description: "Include the needed information to login."
+      }
+    };
+
+    enum PortType{
+      UNKNOWN = 0;
+      COPPOER = 1;
+      FIBER = 2;
+      OTHER = 3;
+    }
+
+    enum PortVlan {
+      ACCESS = 0;
+      TRUNK = 1;
+    }
+
+    // Port number.
+    uint64 id = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {type: INTEGER}];
+    // Enabled port.
+    bool enabled = 2 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Enabled port.", type:BOOLEAN}];
+    // Port tx packets.
+    uint64 tx_packets = 3 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "TX packets.", type:INTEGER}];
+    // Port rx packets.
+    uint64 rx_packets = 4 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "RX packets.", type:INTEGER}];
+    // Port tx bytes.
+    uint64 tx_bytes = 5 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "TX bytes.", type:INTEGER}];
+    // Port rx bytes.
+    uint64 rx_bytes = 6 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "RX bytes.", type:INTEGER}];
+    // Port tx drop.
+    uint64 tx_drop = 7 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "TX drop.", type:INTEGER}];
+    // Port rx drop.
+    uint64 rx_drop = 8 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "RX drop.", type:INTEGER}];
+    PortType type = 9 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Port type. Copper/Fiber."}];
+    string mac_address = 10 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Port MAC address.", type:STRING}];
+    PortVlan vlan_mode = 11 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "Port vlan mode. Access/Trunk"}];
+    repeated uint32 vlan_id = 12 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "VLAN ID.", type:INTEGER}];
+    repeated string ip_address = 13 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "IP address.", type:STRING}];
+  }
+  // Port lists
+  repeated Port port_lists = 1;
+}
+
+message LicenseResponse {
+  option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_schema) = {
+    json_schema: {
+      title: "License Response"
+      description: "Include the information of license."
+    }
+  };
+  enum Level {
+    // Evaluation can only use 30 days.
+    EVALUATION = 0;
+    // Basic level only contain basic functions.
+    BASIC = 1;
+    // Advanced level have few advance feature.
+    ADVANCED = 2;
+    // Pro can have all features.
+    PRO = 3;
+
+  }
+  // License level.
+  Level license_level = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {description: "License level."}];
+}
