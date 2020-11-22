@@ -14,7 +14,7 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     version: "1.0";
     contact: {
       name: "PISC project";
-      url: "https://www.edge-core.com/";
+      url: "https://pisc.edge-core.cn";
       email: "jimmy_ou@edge-core.com";
     };
   };
