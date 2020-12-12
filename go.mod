@@ -6,8 +6,11 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.0.1
-	google.golang.org/genproto v0.0.0-20201019141844-1ed22bb0c154
-	google.golang.org/grpc v1.33.2
+	golang.org/x/net v0.0.0-20201209123823-ac852fbbde11 // indirect
+	golang.org/x/sys v0.0.0-20201211090839-8ad439b19e0f // indirect
+	golang.org/x/text v0.3.4 // indirect
+	google.golang.org/genproto v0.0.0-20201211151036-40ec1c210f7a
+	google.golang.org/grpc v1.34.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.1
 	google.golang.org/protobuf v1.25.0
 )
