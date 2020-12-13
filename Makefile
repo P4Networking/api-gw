@@ -1,14 +1,21 @@
-.PHONY: all proto doc clean
+.PHONY: all build openapi doc clean
 
 all: build
 
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o pisc-api-gw main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o 5gc-api-gw main.go
 
-proto:
-	@echo "\033[32m----- Compiling proto files -----\033[0m"
-	mkdir -p proto/api
-	protoc -I=./proto/ --go_out=. --go-grpc_out=. --grpc-gateway_out=. --openapiv2_out=proto/api --openapiv2_opt logtostderr=true proto/pisc.proto
+openapi:
+	@echo "\033[32m----- Compiling openapi files -----\033[0m"
+	@mv openapi go
+	java -jar ./tools/openapi-generator-cli.jar generate -i api/openapi.yaml -o . -g go-gin-server
+	@mv go openapi
+	@gsed -i 's/COPY go .\/go/COPY openapi .\/go/g' Dockerfile
+	@gsed -i 's/.\/go/github.com\/P4Networking\/api-gw\/openapi/g' main.go
+	@gsed -i 's/TraceDepth_2/TraceDepth2/g' openapi/model_trace_depth_2.go
+	@gsed -i 's/REQUIRED/UpIntegrity_REQUIRED/g' openapi/model_up_integrity.go
+	@gsed -i 's/PREFERRED/UpIntegrity_PREFERRED/g' openapi/model_up_integrity.go
+	@gsed -i 's/NOT_NEEDED/UpIntegrity_NOT_NEEDED/g' openapi/model_up_integrity.go
 
 doc:
 	@echo "\033[32m----- You can view document in -----\033[0m"
@@ -19,4 +26,4 @@ doc:
 clean:
 	@echo "\033[32m----- Clear all environment -----\033[0m"
 	rm -r -f proto/api
-	rm -f pisc-api-gw
+	rm -f *-api-gw

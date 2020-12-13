@@ -1,6 +1,7 @@
 .idea/
 
 pisc-api-gw
+5gc-api-gw
 
 .DS_Store
 *.svg

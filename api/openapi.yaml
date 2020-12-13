@@ -1,0 +1,2905 @@
+openapi: 3.0.0
+info:
+  contact:
+    email: jimmy_ou@edge-core.com
+  description: |
+    Edgecore 5GC API server.  You can find
+    out more about Edgecore 5GC at
+    [http://5gc.edge-core.cn](http://5gc.edge-core.cn).
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://5gc.edge-core.cn/terms/
+  title: Edgecore 5GC
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Edgecore 5GC
+  url: http://5gc.edge-core.cn
+servers:
+- url: https://5gc.edge-core.cn/v1
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/breezestars/5gc/1.0.0
+tags:
+- name: Auth
+- name: PDU
+- name: RAN
+- name: Subscriber
+- name: UE
+- name: Sample
+paths:
+  /auth/logon:
+    post:
+      responses:
+        "405":
+          description: Invalid input
+      summary: Authentication login
+      tags:
+      - Auth
+  /subscriber:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+              - plmnId: 20893
+                udId: imsi-208930000000003
+              - plmnId: 20893
+                udId: imsi-208930000000004
+              schema:
+                $ref: '#/components/schemas/SubsListIE'
+          description: successful operation
+      summary: Get subscribers list
+      tags:
+      - Subscriber
+  /subscriber/{ueId}/{servingPlmnId}:
+    get:
+      parameters:
+      - description: ID of UE
+        explode: false
+        in: path
+        name: ueId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: ID of serving PLMN
+        explode: false
+        in: path
+        name: servingPlmnId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubsData'
+          description: successful operation
+      summary: Get specific subscribe context
+      tags:
+      - Subscriber
+    post:
+      parameters:
+      - description: ID of UE
+        explode: false
+        in: path
+        name: ueId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: ID of serving PLMN
+        explode: false
+        in: path
+        name: servingPlmnId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubsData'
+      responses:
+        "405":
+          description: Invalid input
+      summary: Add/Update subscribe
+      tags:
+      - Subscriber
+  /subscriber/del/{ueId}/{servingPlmnId}:
+    delete:
+      parameters:
+      - description: ID of UE
+        explode: false
+        in: path
+        name: ueId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: ID of serving PLMN
+        explode: false
+        in: path
+        name: servingPlmnId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: UE not found
+      summary: Deletes a subscriber
+      tags:
+      - Subscriber
+  /sample/subscriber:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+                x-content-type: application/json
+          description: successful operation
+      summary: Sample subscriber config
+      tags:
+      - Sample
+  /registered-ue-context:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UEContext'
+          description: successful operation
+      summary: Get UE status
+      tags:
+      - UE
+  /registered-ue-context/{supi}:
+    get:
+      parameters:
+      - description: ID of SUPI
+        explode: false
+        in: path
+        name: supi
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UEContext'
+          description: successful operation
+      summary: Get specific UE status
+      tags:
+      - UE
+  /ue-pdu-session-info:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PDUSessionInfo'
+          description: successful operation
+      summary: Get all PDU
+      tags:
+      - PDU
+  /ue-pdu-session-info/{smContextRef}:
+    get:
+      parameters:
+      - description: ID of session management context reference
+        explode: false
+        in: path
+        name: smContextRef
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PDUSessionInfo'
+          description: successful operation
+      summary: Get specific PDU content
+      tags:
+      - PDU
+  /ran:
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RANInfo'
+          description: successful operation
+      summary: Get all RAN
+      tags:
+      - RAN
+  /ran/{ranId}:
+    get:
+      parameters:
+      - description: ID of RAN
+        explode: false
+        in: path
+        name: ranId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RANInfo'
+          description: successful operation
+      summary: Get specific RAN
+      tags:
+      - RAN
+components:
+  schemas:
+    SubsListIE:
+      items:
+        properties:
+          plmnId:
+            type: string
+          ueId:
+            type: string
+        type: object
+      type: array
+    SubsData:
+      example:
+        sessionManagementSubscriptionData:
+          dnnConfigurations:
+            key:
+              iwkEpsInd: true
+              sessionAmbr:
+                uplink: uplink
+                downlink: downlink
+              "5gQosProfile":
+                priorityLevel: 126
+                "5qi": 126
+                arp:
+                  priorityLevel: 8
+              upSecurity: {}
+              sscModes:
+                allowedSscModes:
+                - null
+                - null
+              "3gppChargingCharacteristics": 3gppChargingCharacteristics
+              pduSessionTypes:
+                allowedSessionTypes:
+                - null
+                - null
+              ladnIndicator: true
+              staticIpAddress:
+              - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+                ipv4Addr: 198.51.100.1
+                ipv6Prefix: 2001:db8:abcd:12::0/64
+              - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+                ipv4Addr: 198.51.100.1
+                ipv6Prefix: 2001:db8:abcd:12::0/64
+          sharedDnnConfigurationsIds: sharedDnnConfigurationsIds
+          singleNssai:
+            sd: sd
+            sst: 188
+          internalGroupIds:
+          - null
+          - null
+        authenticationSubscription:
+          authenticationManagementField: authenticationManagementField
+          sequenceNumber: sequenceNumber
+          opc:
+            opcValue: opcValue
+            encryptionKey: 9
+            encryptionAlgorithm: 3
+          permanentKey:
+            permanentKeyValue: permanentKeyValue
+            encryptionKey: 0
+            encryptionAlgorithm: 6
+          topc:
+            topcValue: topcValue
+            encryptionKey: 2
+            encryptionAlgorithm: 4
+          milenage:
+            op:
+              encryptionKey: 1
+              opValue: opValue
+              encryptionAlgorithm: 5
+            constants:
+              c3: c3
+              c4: c4
+              c5: c5
+              c1: c1
+              c2: c2
+            rotations:
+              r2: r2
+              r3: r3
+              r4: r4
+              r5: r5
+              r1: r1
+          tuak:
+            keccakIterations: 180
+            top:
+              topValue: topValue
+              encryptionKey: 5
+              encryptionAlgorithm: 2
+          sharedAuthenticationSubscriptionId:
+            sharedSmsSubsData:
+              sharedSmsSubsDataId:
+              - null
+              - null
+              smsSubscribed: true
+            sharedDnnConfigurations:
+              key:
+                iwkEpsInd: true
+                sessionAmbr:
+                  uplink: uplink
+                  downlink: downlink
+                "5gQosProfile":
+                  priorityLevel: 126
+                  "5qi": 126
+                  arp:
+                    priorityLevel: 8
+                upSecurity: {}
+                sscModes:
+                  allowedSscModes:
+                  - null
+                  - null
+                "3gppChargingCharacteristics": 3gppChargingCharacteristics
+                pduSessionTypes:
+                  allowedSessionTypes:
+                  - null
+                  - null
+                ladnIndicator: true
+                staticIpAddress:
+                - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+                  ipv4Addr: 198.51.100.1
+                  ipv6Prefix: 2001:db8:abcd:12::0/64
+                - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+                  ipv4Addr: 198.51.100.1
+                  ipv6Prefix: 2001:db8:abcd:12::0/64
+            sharedAuthenticationSubscription:
+              authenticationManagementField: authenticationManagementField
+              milenage:
+                op:
+                  encryptionKey: 1
+                  opValue: opValue
+                  encryptionAlgorithm: 5
+                constants:
+                  c3: c3
+                  c4: c4
+                  c5: c5
+                  c1: c1
+                  c2: c2
+                rotations:
+                  r2: r2
+                  r3: r3
+                  r4: r4
+                  r5: r5
+                  r1: r1
+              tuak:
+                keccakIterations: 180
+                top:
+                  topValue: topValue
+                  encryptionKey: 5
+                  encryptionAlgorithm: 2
+            sharedSnssaiInfos:
+              key:
+                dnnInfos:
+                - defaultDnnIndicator: true
+                  iwkEpsInd: true
+                  dnn: dnn
+                  lboRoamingAllowed: true
+                  ladnIndicator: true
+                - defaultDnnIndicator: true
+                  iwkEpsInd: true
+                  dnn: dnn
+                  lboRoamingAllowed: true
+                  ladnIndicator: true
+            sharedDataId: sharedDataId
+            sharedTraceData:
+              eventList: eventList
+              collectionEntityIpv6Addr: 2001:db8:85a3::8a2e:370:7334
+              collectionEntityIpv4Addr: 198.51.100.1
+              traceRef: traceRef
+              interfaceList: interfaceList
+              neTypeList: neTypeList
+            sharedSmsMngSubsData:
+              moSmsBarringAll: true
+              supportedFeatures: supportedFeatures
+              mtSmsBarringRoaming: true
+              mtSmsSubscribed: true
+              moSmsBarringRoaming: true
+              mtSmsBarringAll: true
+              moSmsSubscribed: true
+              sharedSmsMngDataIds:
+              - null
+              - null
+            sharedAmData:
+              supportedFeatures: supportedFeatures
+              mcsPriority: true
+              activeTime: 7
+              subscribedUeAmbr:
+                uplink: uplink
+                downlink: downlink
+              coreNetworkTypeRestrictions:
+              - null
+              - null
+              sharedAmDataIds:
+              - null
+              - null
+              nssai:
+                supportedFeatures: supportedFeatures
+                defaultSingleNssais:
+                - sd: sd
+                  sst: 188
+                - sd: sd
+                  sst: 188
+                singleNssais:
+                - sd: sd
+                  sst: 188
+                - sd: sd
+                  sst: 188
+              dlPacketCount: 0
+              gpsis:
+              - null
+              - null
+              rfspIndex: 27
+              mpsPriority: true
+              forbiddenAreas:
+              - areaCodes: areaCodes
+                tacs:
+                - null
+                - null
+              - areaCodes: areaCodes
+                tacs:
+                - null
+                - null
+              serviceAreaRestriction:
+                maxNumOfTAs: 0
+                areas:
+                - areaCodes: areaCodes
+                  tacs:
+                  - null
+                  - null
+                - areaCodes: areaCodes
+                  tacs:
+                  - null
+                  - null
+              ratRestrictions:
+              - null
+              - null
+              sorInfo:
+                sorMacIausf: sorMacIausf
+                countersor: countersor
+                ackInd: true
+              subsRegTimer: 1
+              ueUsageType: 6
+              internalGroupIds:
+              - null
+              - null
+              micoAllowed: true
+        smfSelectionSubscriptionData:
+          supportedFeatures: supportedFeatures
+          subscribedSnssaiInfos:
+            key:
+              dnnInfos:
+              - defaultDnnIndicator: true
+                iwkEpsInd: true
+                dnn: dnn
+                lboRoamingAllowed: true
+                ladnIndicator: true
+              - defaultDnnIndicator: true
+                iwkEpsInd: true
+                dnn: dnn
+                lboRoamingAllowed: true
+                ladnIndicator: true
+          sharedSnssaiInfosId: sharedSnssaiInfosId
+        smPolicyData:
+          umData:
+            key:
+              allowedUsage:
+                duration: 0
+                totalVolume: 0
+                downlinkVolume: 0
+                uplinkVolume: 0
+              limitId: limitId
+              scopes:
+                key:
+                  snssai:
+                    sd: sd
+                    sst: 188
+                  dnn:
+                  - null
+                  - null
+              resetTime:
+                maxNumPeriod: 0
+          umDataLimits:
+            key:
+              resetPeriod: 2000-01-23T04:56:07.000+0000
+              endDate: 2000-01-23T04:56:07.000+0000
+              usageLimit:
+                duration: 0
+                totalVolume: 0
+                downlinkVolume: 0
+                uplinkVolume: 0
+              limitId: limitId
+              scopes:
+                key:
+                  snssai:
+                    sd: sd
+                    sst: 188
+                  dnn:
+                  - null
+                  - null
+              startDate: 2000-01-23T04:56:07.000+0000
+          smPolicySnssaiData:
+            key:
+              smPolicyDnnData:
+                key:
+                  adcSupport: true
+                  dnn: dnn
+                  ipv4Index: 0
+                  gbrDl: gbrDl
+                  subscSpendingLimits: true
+                  chfInfo:
+                    secondaryChfAddress: secondaryChfAddress
+                    primaryChfAddress: primaryChfAddress
+                  refUmDataLimitIds:
+                    key:
+                      monkey:
+                      - monkey
+                      - monkey
+                      limitId: limitId
+                  offline: true
+                  allowedServices:
+                  - allowedServices
+                  - allowedServices
+                  mpsPriority: true
+                  imsSignallingPrio: true
+                  subscCats:
+                  - subscCats
+                  - subscCats
+                  gbrUl: gbrUl
+                  ipv6Index: 6
+                  online: true
+                  mpsPriorityLevel: 1
+              snssai:
+                sd: sd
+                sst: 188
+        plmnId: plmnId
+        accessAndMobilitySubscriptionData:
+          supportedFeatures: supportedFeatures
+          mcsPriority: true
+          activeTime: 7
+          subscribedUeAmbr:
+            uplink: uplink
+            downlink: downlink
+          coreNetworkTypeRestrictions:
+          - null
+          - null
+          sharedAmDataIds:
+          - null
+          - null
+          nssai:
+            supportedFeatures: supportedFeatures
+            defaultSingleNssais:
+            - sd: sd
+              sst: 188
+            - sd: sd
+              sst: 188
+            singleNssais:
+            - sd: sd
+              sst: 188
+            - sd: sd
+              sst: 188
+          dlPacketCount: 0
+          gpsis:
+          - null
+          - null
+          rfspIndex: 27
+          mpsPriority: true
+          forbiddenAreas:
+          - areaCodes: areaCodes
+            tacs:
+            - null
+            - null
+          - areaCodes: areaCodes
+            tacs:
+            - null
+            - null
+          serviceAreaRestriction:
+            maxNumOfTAs: 0
+            areas:
+            - areaCodes: areaCodes
+              tacs:
+              - null
+              - null
+            - areaCodes: areaCodes
+              tacs:
+              - null
+              - null
+          ratRestrictions:
+          - null
+          - null
+          sorInfo:
+            sorMacIausf: sorMacIausf
+            countersor: countersor
+            ackInd: true
+          subsRegTimer: 1
+          ueUsageType: 6
+          internalGroupIds:
+          - null
+          - null
+          micoAllowed: true
+        ueId: ueId
+        amPolicyData:
+          subscCats:
+          - subscCats
+          - subscCats
+      properties:
+        plmnId:
+          type: string
+        ueId:
+          type: string
+        authenticationSubscription:
+          $ref: '#/components/schemas/AuthenticationSubscription'
+        accessAndMobilitySubscriptionData:
+          $ref: '#/components/schemas/AccessAndMobilitySubscriptionData'
+        sessionManagementSubscriptionData:
+          $ref: '#/components/schemas/SessionManagementSubscriptionData'
+        smfSelectionSubscriptionData:
+          $ref: '#/components/schemas/SmfSelectionSubscriptionData'
+        amPolicyData:
+          $ref: '#/components/schemas/AmPolicyData'
+        smPolicyData:
+          $ref: '#/components/schemas/SmPolicyData'
+      type: object
+    UEContext:
+      items:
+        properties:
+          accessType:
+            type: string
+          supi:
+            type: string
+          guti:
+            type: string
+          mcc:
+            type: string
+          mnc:
+            type: string
+          tac:
+            type: string
+          pduSessions:
+            items:
+              properties:
+                pduSessionId:
+                  type: string
+                smContextRef:
+                  type: string
+                sst:
+                  type: string
+                sd:
+                  type: string
+                dnn:
+                  type: string
+              type: object
+            type: array
+          cmState:
+            type: string
+        type: object
+      type: array
+    PDUSessionInfo:
+      items:
+        properties:
+          supi:
+            type: string
+          pDUSessionID:
+            type: string
+          dnn:
+            type: string
+          sst:
+            type: string
+          sd:
+            type: string
+          anType:
+            type: string
+          pDUAddress:
+            type: string
+          sessionRule:
+            $ref: '#/components/schemas/SessionRule'
+          upCnxState:
+            type: string
+        type: object
+      type: array
+    RANInfo:
+      items:
+        properties:
+          ranPresent:
+            format: int
+            type: integer
+          ranId:
+            $ref: '#/components/schemas/GlobalRanNodeId'
+          name:
+            type: string
+          anyType:
+            type: string
+          conn:
+            properties:
+              address:
+                type: string
+              port:
+                type: integer
+            type: object
+          supportedTAList:
+            items:
+              properties:
+                tai:
+                  $ref: '#/components/schemas/Tai'
+                sNssaiList:
+                  items:
+                    properties:
+                      sst:
+                        format: int32
+                        type: integer
+                      sd:
+                        type: string
+                    type: object
+                  type: array
+              type: object
+            type: array
+          ranUeList:
+            items:
+              properties:
+                ranUeNgapId:
+                  format: int64
+                  type: integer
+                amfUeNgapId:
+                  format: int64
+                  type: integer
+              type: object
+            type: array
+        type: object
+      type: array
+    AuthenticationSubscription:
+      example:
+        authenticationManagementField: authenticationManagementField
+        sequenceNumber: sequenceNumber
+        opc:
+          opcValue: opcValue
+          encryptionKey: 9
+          encryptionAlgorithm: 3
+        permanentKey:
+          permanentKeyValue: permanentKeyValue
+          encryptionKey: 0
+          encryptionAlgorithm: 6
+        topc:
+          topcValue: topcValue
+          encryptionKey: 2
+          encryptionAlgorithm: 4
+        milenage:
+          op:
+            encryptionKey: 1
+            opValue: opValue
+            encryptionAlgorithm: 5
+          constants:
+            c3: c3
+            c4: c4
+            c5: c5
+            c1: c1
+            c2: c2
+          rotations:
+            r2: r2
+            r3: r3
+            r4: r4
+            r5: r5
+            r1: r1
+        tuak:
+          keccakIterations: 180
+          top:
+            topValue: topValue
+            encryptionKey: 5
+            encryptionAlgorithm: 2
+        sharedAuthenticationSubscriptionId:
+          sharedSmsSubsData:
+            sharedSmsSubsDataId:
+            - null
+            - null
+            smsSubscribed: true
+          sharedDnnConfigurations:
+            key:
+              iwkEpsInd: true
+              sessionAmbr:
+                uplink: uplink
+                downlink: downlink
+              "5gQosProfile":
+                priorityLevel: 126
+                "5qi": 126
+                arp:
+                  priorityLevel: 8
+              upSecurity: {}
+              sscModes:
+                allowedSscModes:
+                - null
+                - null
+              "3gppChargingCharacteristics": 3gppChargingCharacteristics
+              pduSessionTypes:
+                allowedSessionTypes:
+                - null
+                - null
+              ladnIndicator: true
+              staticIpAddress:
+              - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+                ipv4Addr: 198.51.100.1
+                ipv6Prefix: 2001:db8:abcd:12::0/64
+              - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+                ipv4Addr: 198.51.100.1
+                ipv6Prefix: 2001:db8:abcd:12::0/64
+          sharedAuthenticationSubscription:
+            authenticationManagementField: authenticationManagementField
+            milenage:
+              op:
+                encryptionKey: 1
+                opValue: opValue
+                encryptionAlgorithm: 5
+              constants:
+                c3: c3
+                c4: c4
+                c5: c5
+                c1: c1
+                c2: c2
+              rotations:
+                r2: r2
+                r3: r3
+                r4: r4
+                r5: r5
+                r1: r1
+            tuak:
+              keccakIterations: 180
+              top:
+                topValue: topValue
+                encryptionKey: 5
+                encryptionAlgorithm: 2
+          sharedSnssaiInfos:
+            key:
+              dnnInfos:
+              - defaultDnnIndicator: true
+                iwkEpsInd: true
+                dnn: dnn
+                lboRoamingAllowed: true
+                ladnIndicator: true
+              - defaultDnnIndicator: true
+                iwkEpsInd: true
+                dnn: dnn
+                lboRoamingAllowed: true
+                ladnIndicator: true
+          sharedDataId: sharedDataId
+          sharedTraceData:
+            eventList: eventList
+            collectionEntityIpv6Addr: 2001:db8:85a3::8a2e:370:7334
+            collectionEntityIpv4Addr: 198.51.100.1
+            traceRef: traceRef
+            interfaceList: interfaceList
+            neTypeList: neTypeList
+          sharedSmsMngSubsData:
+            moSmsBarringAll: true
+            supportedFeatures: supportedFeatures
+            mtSmsBarringRoaming: true
+            mtSmsSubscribed: true
+            moSmsBarringRoaming: true
+            mtSmsBarringAll: true
+            moSmsSubscribed: true
+            sharedSmsMngDataIds:
+            - null
+            - null
+          sharedAmData:
+            supportedFeatures: supportedFeatures
+            mcsPriority: true
+            activeTime: 7
+            subscribedUeAmbr:
+              uplink: uplink
+              downlink: downlink
+            coreNetworkTypeRestrictions:
+            - null
+            - null
+            sharedAmDataIds:
+            - null
+            - null
+            nssai:
+              supportedFeatures: supportedFeatures
+              defaultSingleNssais:
+              - sd: sd
+                sst: 188
+              - sd: sd
+                sst: 188
+              singleNssais:
+              - sd: sd
+                sst: 188
+              - sd: sd
+                sst: 188
+            dlPacketCount: 0
+            gpsis:
+            - null
+            - null
+            rfspIndex: 27
+            mpsPriority: true
+            forbiddenAreas:
+            - areaCodes: areaCodes
+              tacs:
+              - null
+              - null
+            - areaCodes: areaCodes
+              tacs:
+              - null
+              - null
+            serviceAreaRestriction:
+              maxNumOfTAs: 0
+              areas:
+              - areaCodes: areaCodes
+                tacs:
+                - null
+                - null
+              - areaCodes: areaCodes
+                tacs:
+                - null
+                - null
+            ratRestrictions:
+            - null
+            - null
+            sorInfo:
+              sorMacIausf: sorMacIausf
+              countersor: countersor
+              ackInd: true
+            subsRegTimer: 1
+            ueUsageType: 6
+            internalGroupIds:
+            - null
+            - null
+            micoAllowed: true
+      properties:
+        authenticationMethod:
+          $ref: '#/components/schemas/AuthMethod'
+        permanentKey:
+          $ref: '#/components/schemas/PermanentKey'
+        sequenceNumber:
+          pattern: ^[A-Fa-f0-9]{12}$
+          type: string
+        authenticationManagementField:
+          pattern: ^[A-Fa-f0-9]{4}$
+          type: string
+        vectorAlgorithm:
+          $ref: '#/components/schemas/VectorAlgorithm'
+        milenage:
+          $ref: '#/components/schemas/Milenage'
+        tuak:
+          $ref: '#/components/schemas/Tuak'
+        opc:
+          $ref: '#/components/schemas/Opc'
+        topc:
+          $ref: '#/components/schemas/Topc'
+        sharedAuthenticationSubscriptionId:
+          $ref: '#/components/schemas/SharedData_2'
+      required:
+      - authenticationMethod
+      - permanentKey
+      - sequenceNumber
+      type: object
+    AuthMethod:
+      enum:
+      - 5G_AKA
+      - EAP_AKA_PRIME
+      type: string
+    PermanentKey:
+      example:
+        permanentKeyValue: permanentKeyValue
+        encryptionKey: 0
+        encryptionAlgorithm: 6
+      properties:
+        permanentKeyValue:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        encryptionKey:
+          format: int32
+          type: integer
+        encryptionAlgorithm:
+          format: int32
+          type: integer
+      required:
+      - encryptionAlgorithm
+      - encryptionKey
+      - permanentKeyValue
+      type: object
+    VectorAlgorithm:
+      enum:
+      - MILENAGE
+      - TUAK
+      type: string
+    Milenage:
+      example:
+        op:
+          encryptionKey: 1
+          opValue: opValue
+          encryptionAlgorithm: 5
+        constants:
+          c3: c3
+          c4: c4
+          c5: c5
+          c1: c1
+          c2: c2
+        rotations:
+          r2: r2
+          r3: r3
+          r4: r4
+          r5: r5
+          r1: r1
+      properties:
+        op:
+          $ref: '#/components/schemas/Op'
+        rotations:
+          $ref: '#/components/schemas/Rotations'
+        constants:
+          $ref: '#/components/schemas/Constants'
+      type: object
+    Op:
+      example:
+        encryptionKey: 1
+        opValue: opValue
+        encryptionAlgorithm: 5
+      properties:
+        opValue:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        encryptionKey:
+          format: int32
+          type: integer
+        encryptionAlgorithm:
+          format: int32
+          type: integer
+      required:
+      - encryptionAlgorithm
+      - encryptionKey
+      - opValue
+      type: object
+    Rotations:
+      example:
+        r2: r2
+        r3: r3
+        r4: r4
+        r5: r5
+        r1: r1
+      properties:
+        r1:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        r2:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        r3:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        r4:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        r5:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+      required:
+      - r1
+      - r2
+      - r3
+      - r4
+      - r5
+      type: object
+    Constants:
+      example:
+        c3: c3
+        c4: c4
+        c5: c5
+        c1: c1
+        c2: c2
+      properties:
+        c1:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        c2:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        c3:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        c4:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        c5:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+      required:
+      - c1
+      - c2
+      - c3
+      - c4
+      - c5
+      type: object
+    Tuak:
+      example:
+        keccakIterations: 180
+        top:
+          topValue: topValue
+          encryptionKey: 5
+          encryptionAlgorithm: 2
+      properties:
+        top:
+          $ref: '#/components/schemas/Top'
+        keccakIterations:
+          format: int32
+          maximum: 255
+          minimum: 1
+          type: integer
+      type: object
+    Top:
+      example:
+        topValue: topValue
+        encryptionKey: 5
+        encryptionAlgorithm: 2
+      properties:
+        topValue:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        encryptionKey:
+          format: int32
+          type: integer
+        encryptionAlgorithm:
+          format: int32
+          type: integer
+      required:
+      - encryptionAlgorithm
+      - encryptionKey
+      - topValue
+      type: object
+    Opc:
+      example:
+        opcValue: opcValue
+        encryptionKey: 9
+        encryptionAlgorithm: 3
+      properties:
+        opcValue:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        encryptionKey:
+          format: int32
+          type: integer
+        encryptionAlgorithm:
+          format: int32
+          type: integer
+      required:
+      - encryptionAlgorithm
+      - encryptionKey
+      - opcValue
+      type: object
+    Topc:
+      example:
+        topcValue: topcValue
+        encryptionKey: 2
+        encryptionAlgorithm: 4
+      properties:
+        topcValue:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        encryptionKey:
+          format: int32
+          type: integer
+        encryptionAlgorithm:
+          format: int32
+          type: integer
+      required:
+      - encryptionAlgorithm
+      - encryptionKey
+      - topcValue
+      type: object
+    SharedData_2:
+      example:
+        sharedSmsSubsData:
+          sharedSmsSubsDataId:
+          - null
+          - null
+          smsSubscribed: true
+        sharedDnnConfigurations:
+          key:
+            iwkEpsInd: true
+            sessionAmbr:
+              uplink: uplink
+              downlink: downlink
+            "5gQosProfile":
+              priorityLevel: 126
+              "5qi": 126
+              arp:
+                priorityLevel: 8
+            upSecurity: {}
+            sscModes:
+              allowedSscModes:
+              - null
+              - null
+            "3gppChargingCharacteristics": 3gppChargingCharacteristics
+            pduSessionTypes:
+              allowedSessionTypes:
+              - null
+              - null
+            ladnIndicator: true
+            staticIpAddress:
+            - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+              ipv4Addr: 198.51.100.1
+              ipv6Prefix: 2001:db8:abcd:12::0/64
+            - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+              ipv4Addr: 198.51.100.1
+              ipv6Prefix: 2001:db8:abcd:12::0/64
+        sharedAuthenticationSubscription:
+          authenticationManagementField: authenticationManagementField
+          milenage:
+            op:
+              encryptionKey: 1
+              opValue: opValue
+              encryptionAlgorithm: 5
+            constants:
+              c3: c3
+              c4: c4
+              c5: c5
+              c1: c1
+              c2: c2
+            rotations:
+              r2: r2
+              r3: r3
+              r4: r4
+              r5: r5
+              r1: r1
+          tuak:
+            keccakIterations: 180
+            top:
+              topValue: topValue
+              encryptionKey: 5
+              encryptionAlgorithm: 2
+        sharedSnssaiInfos:
+          key:
+            dnnInfos:
+            - defaultDnnIndicator: true
+              iwkEpsInd: true
+              dnn: dnn
+              lboRoamingAllowed: true
+              ladnIndicator: true
+            - defaultDnnIndicator: true
+              iwkEpsInd: true
+              dnn: dnn
+              lboRoamingAllowed: true
+              ladnIndicator: true
+        sharedDataId: sharedDataId
+        sharedTraceData:
+          eventList: eventList
+          collectionEntityIpv6Addr: 2001:db8:85a3::8a2e:370:7334
+          collectionEntityIpv4Addr: 198.51.100.1
+          traceRef: traceRef
+          interfaceList: interfaceList
+          neTypeList: neTypeList
+        sharedSmsMngSubsData:
+          moSmsBarringAll: true
+          supportedFeatures: supportedFeatures
+          mtSmsBarringRoaming: true
+          mtSmsSubscribed: true
+          moSmsBarringRoaming: true
+          mtSmsBarringAll: true
+          moSmsSubscribed: true
+          sharedSmsMngDataIds:
+          - null
+          - null
+        sharedAmData:
+          supportedFeatures: supportedFeatures
+          mcsPriority: true
+          activeTime: 7
+          subscribedUeAmbr:
+            uplink: uplink
+            downlink: downlink
+          coreNetworkTypeRestrictions:
+          - null
+          - null
+          sharedAmDataIds:
+          - null
+          - null
+          nssai:
+            supportedFeatures: supportedFeatures
+            defaultSingleNssais:
+            - sd: sd
+              sst: 188
+            - sd: sd
+              sst: 188
+            singleNssais:
+            - sd: sd
+              sst: 188
+            - sd: sd
+              sst: 188
+          dlPacketCount: 0
+          gpsis:
+          - null
+          - null
+          rfspIndex: 27
+          mpsPriority: true
+          forbiddenAreas:
+          - areaCodes: areaCodes
+            tacs:
+            - null
+            - null
+          - areaCodes: areaCodes
+            tacs:
+            - null
+            - null
+          serviceAreaRestriction:
+            maxNumOfTAs: 0
+            areas:
+            - areaCodes: areaCodes
+              tacs:
+              - null
+              - null
+            - areaCodes: areaCodes
+              tacs:
+              - null
+              - null
+          ratRestrictions:
+          - null
+          - null
+          sorInfo:
+            sorMacIausf: sorMacIausf
+            countersor: countersor
+            ackInd: true
+          subsRegTimer: 1
+          ueUsageType: 6
+          internalGroupIds:
+          - null
+          - null
+          micoAllowed: true
+      properties:
+        sharedDataId:
+          pattern: ^[0-9]{5,6}-.+$
+          type: string
+        sharedAmData:
+          $ref: '#/components/schemas/AccessAndMobilitySubscriptionData'
+        sharedSmsSubsData:
+          $ref: '#/components/schemas/SmsSubscriptionData'
+        sharedSmsMngSubsData:
+          $ref: '#/components/schemas/SmsManagementSubscriptionData'
+        sharedDnnConfigurations:
+          additionalProperties:
+            $ref: '#/components/schemas/DnnConfiguration'
+          type: object
+        sharedTraceData:
+          $ref: '#/components/schemas/TraceData_2'
+        sharedSnssaiInfos:
+          additionalProperties:
+            $ref: '#/components/schemas/SnssaiInfo'
+          type: object
+        sharedAuthenticationSubscription:
+          $ref: '#/components/schemas/SharedAuthenticationSubscription_2'
+      required:
+      - sharedDataId
+      type: object
+    AccessAndMobilitySubscriptionData:
+      example:
+        supportedFeatures: supportedFeatures
+        mcsPriority: true
+        activeTime: 7
+        subscribedUeAmbr:
+          uplink: uplink
+          downlink: downlink
+        coreNetworkTypeRestrictions:
+        - null
+        - null
+        sharedAmDataIds:
+        - null
+        - null
+        nssai:
+          supportedFeatures: supportedFeatures
+          defaultSingleNssais:
+          - sd: sd
+            sst: 188
+          - sd: sd
+            sst: 188
+          singleNssais:
+          - sd: sd
+            sst: 188
+          - sd: sd
+            sst: 188
+        dlPacketCount: 0
+        gpsis:
+        - null
+        - null
+        rfspIndex: 27
+        mpsPriority: true
+        forbiddenAreas:
+        - areaCodes: areaCodes
+          tacs:
+          - null
+          - null
+        - areaCodes: areaCodes
+          tacs:
+          - null
+          - null
+        serviceAreaRestriction:
+          maxNumOfTAs: 0
+          areas:
+          - areaCodes: areaCodes
+            tacs:
+            - null
+            - null
+          - areaCodes: areaCodes
+            tacs:
+            - null
+            - null
+        ratRestrictions:
+        - null
+        - null
+        sorInfo:
+          sorMacIausf: sorMacIausf
+          countersor: countersor
+          ackInd: true
+        subsRegTimer: 1
+        ueUsageType: 6
+        internalGroupIds:
+        - null
+        - null
+        micoAllowed: true
+      properties:
+        supportedFeatures:
+          pattern: ^[A-Fa-f0-9]*$
+          type: string
+        gpsis:
+          items:
+            $ref: '#/components/schemas/Gpsi'
+          type: array
+        internalGroupIds:
+          items:
+            $ref: '#/components/schemas/GroupId'
+          minItems: 1
+          type: array
+        subscribedUeAmbr:
+          $ref: '#/components/schemas/AmbrRm'
+        nssai:
+          $ref: '#/components/schemas/Nssai'
+        ratRestrictions:
+          items:
+            $ref: '#/components/schemas/RatType'
+          type: array
+        forbiddenAreas:
+          items:
+            $ref: '#/components/schemas/Area'
+          type: array
+        serviceAreaRestriction:
+          $ref: '#/components/schemas/ServiceAreaRestriction'
+        coreNetworkTypeRestrictions:
+          items:
+            $ref: '#/components/schemas/CoreNetworkType'
+          type: array
+        rfspIndex:
+          format: int32
+          maximum: 256
+          minimum: 1
+          nullable: true
+          type: integer
+        subsRegTimer:
+          format: int32
+          nullable: true
+          type: integer
+        ueUsageType:
+          format: int32
+          type: integer
+        mpsPriority:
+          type: boolean
+        mcsPriority:
+          type: boolean
+        activeTime:
+          format: int32
+          nullable: true
+          type: integer
+        dlPacketCount:
+          format: int32
+          minimum: -1
+          type: integer
+        sorInfo:
+          $ref: '#/components/schemas/SorInfo'
+        micoAllowed:
+          type: boolean
+        sharedAmDataIds:
+          items:
+            $ref: '#/components/schemas/SharedDataId'
+          minItems: 1
+          type: array
+        odbPacketServices:
+          $ref: '#/components/schemas/OdbPacketServices'
+      type: object
+    Gpsi:
+      pattern: ^(msisdn-[0-9]{5,15}|extid-[^@]+@[^@]+|.+)$
+      type: string
+    GroupId:
+      pattern: ^[A-Fa-f0-9]{8}-[0-9]{3}-[0-9]{2,3}-([A-Fa-f0-9][A-Fa-f0-9]){1,10}$
+      type: string
+    AmbrRm:
+      example:
+        uplink: uplink
+        downlink: downlink
+      nullable: true
+      properties:
+        uplink:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        downlink:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+      required:
+      - downlink
+      - uplink
+      type: object
+    Nssai:
+      example:
+        supportedFeatures: supportedFeatures
+        defaultSingleNssais:
+        - sd: sd
+          sst: 188
+        - sd: sd
+          sst: 188
+        singleNssais:
+        - sd: sd
+          sst: 188
+        - sd: sd
+          sst: 188
+      nullable: true
+      properties:
+        supportedFeatures:
+          pattern: ^[A-Fa-f0-9]*$
+          type: string
+        defaultSingleNssais:
+          items:
+            $ref: '#/components/schemas/Snssai_2'
+          minItems: 1
+          type: array
+        singleNssais:
+          items:
+            $ref: '#/components/schemas/Snssai_2'
+          minItems: 1
+          type: array
+      required:
+      - defaultSingleNssais
+      type: object
+    Snssai_2:
+      example:
+        sd: sd
+        sst: 188
+      properties:
+        sst:
+          format: int32
+          maximum: 255
+          minimum: 0
+          type: integer
+        sd:
+          pattern: ^[A-Fa-f0-9]{6}$
+          type: string
+      required:
+      - sst
+      type: object
+    RatType:
+      enum:
+      - NR
+      - EUTRA
+      - WLAN
+      - VIRTUAL
+      type: string
+    Area:
+      example:
+        areaCodes: areaCodes
+        tacs:
+        - null
+        - null
+      oneOf:
+      - required:
+        - tacs
+      - required:
+        - areaCode
+      properties:
+        tacs:
+          items:
+            $ref: '#/components/schemas/Tac'
+          minItems: 1
+          type: array
+        areaCodes:
+          type: string
+      type: object
+    Tac:
+      pattern: (^[A-Fa-f0-9]{4}$)|(^[A-Fa-f0-9]{6}$)
+      type: string
+    ServiceAreaRestriction:
+      allOf:
+      - oneOf:
+        - not:
+            required:
+            - restrictionType
+        - required:
+          - areas
+      - anyOf:
+        - not:
+            properties:
+              restrictionType:
+                enum:
+                - NOT_ALLOWED_AREAS
+                type: string
+            required:
+            - restrictionType
+        - not:
+            required:
+            - maxNumOfTAs
+      example:
+        maxNumOfTAs: 0
+        areas:
+        - areaCodes: areaCodes
+          tacs:
+          - null
+          - null
+        - areaCodes: areaCodes
+          tacs:
+          - null
+          - null
+      properties:
+        restrictionType:
+          $ref: '#/components/schemas/RestrictionType'
+        areas:
+          items:
+            $ref: '#/components/schemas/Area'
+          type: array
+        maxNumOfTAs:
+          format: int32
+          minimum: 0
+          type: integer
+      type: object
+    RestrictionType:
+      enum:
+      - ALLOWED_AREAS
+      - NOT_ALLOWED_AREAS
+      type: string
+    CoreNetworkType:
+      enum:
+      - 5GC
+      - EPC
+      type: string
+    SorInfo:
+      example:
+        sorMacIausf: sorMacIausf
+        countersor: countersor
+        ackInd: true
+      properties:
+        steeringContainer:
+          $ref: '#/components/schemas/SteeringContainer'
+        ackInd:
+          type: boolean
+        sorMacIausf:
+          pattern: ^[A-Fa-f0-9]{32}$
+          type: string
+        countersor:
+          pattern: ^[A-Fa-f0-9]{4}$
+          type: string
+      required:
+      - ackInd
+      - countersor
+      - sorMacIausf
+      type: object
+    SteeringContainer:
+      oneOf:
+      - items:
+          $ref: '#/components/schemas/SteeringInfo'
+        minItems: 1
+        type: array
+      - $ref: '#/components/schemas/SecuredPacket'
+    SecuredPacket:
+      format: base64
+      type: string
+    SharedDataId:
+      pattern: ^[0-9]{5,6}-.+$
+      type: string
+    OdbPacketServices:
+      enum:
+      - ALL_PACKET_SERVICES
+      - ROAMER_ACCESS_HPLMN_AP
+      - ROAMER_ACCESS_VPLMN_AP
+      type: string
+    SmsSubscriptionData:
+      example:
+        sharedSmsSubsDataId:
+        - null
+        - null
+        smsSubscribed: true
+      properties:
+        smsSubscribed:
+          type: boolean
+        sharedSmsSubsDataId:
+          items:
+            $ref: '#/components/schemas/SharedDataId'
+          type: array
+      type: object
+    SmsManagementSubscriptionData:
+      example:
+        moSmsBarringAll: true
+        supportedFeatures: supportedFeatures
+        mtSmsBarringRoaming: true
+        mtSmsSubscribed: true
+        moSmsBarringRoaming: true
+        mtSmsBarringAll: true
+        moSmsSubscribed: true
+        sharedSmsMngDataIds:
+        - null
+        - null
+      properties:
+        supportedFeatures:
+          pattern: ^[A-Fa-f0-9]*$
+          type: string
+        mtSmsSubscribed:
+          type: boolean
+        mtSmsBarringAll:
+          type: boolean
+        mtSmsBarringRoaming:
+          type: boolean
+        moSmsSubscribed:
+          type: boolean
+        moSmsBarringAll:
+          type: boolean
+        moSmsBarringRoaming:
+          type: boolean
+        sharedSmsMngDataIds:
+          items:
+            $ref: '#/components/schemas/SharedDataId'
+          minItems: 1
+          type: array
+      type: object
+    DnnConfiguration:
+      example:
+        iwkEpsInd: true
+        sessionAmbr:
+          uplink: uplink
+          downlink: downlink
+        "5gQosProfile":
+          priorityLevel: 126
+          "5qi": 126
+          arp:
+            priorityLevel: 8
+        upSecurity: {}
+        sscModes:
+          allowedSscModes:
+          - null
+          - null
+        "3gppChargingCharacteristics": 3gppChargingCharacteristics
+        pduSessionTypes:
+          allowedSessionTypes:
+          - null
+          - null
+        ladnIndicator: true
+        staticIpAddress:
+        - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+          ipv4Addr: 198.51.100.1
+          ipv6Prefix: 2001:db8:abcd:12::0/64
+        - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+          ipv4Addr: 198.51.100.1
+          ipv6Prefix: 2001:db8:abcd:12::0/64
+      properties:
+        pduSessionTypes:
+          $ref: '#/components/schemas/PduSessionTypes'
+        sscModes:
+          $ref: '#/components/schemas/SscModes'
+        iwkEpsInd:
+          type: boolean
+        ladnIndicator:
+          type: boolean
+        "5gQosProfile":
+          $ref: '#/components/schemas/SubscribedDefaultQos'
+        sessionAmbr:
+          $ref: '#/components/schemas/Ambr'
+        "3gppChargingCharacteristics":
+          type: string
+        staticIpAddress:
+          items:
+            $ref: '#/components/schemas/IpAddress'
+          maxItems: 2
+          minItems: 1
+          type: array
+        upSecurity:
+          $ref: '#/components/schemas/UpSecurity'
+      required:
+      - pduSessionTypes
+      - sscModes
+      type: object
+    PduSessionTypes:
+      example:
+        allowedSessionTypes:
+        - null
+        - null
+      properties:
+        defaultSessionType:
+          $ref: '#/components/schemas/PduSessionType'
+        allowedSessionTypes:
+          items:
+            $ref: '#/components/schemas/PduSessionType'
+          minItems: 1
+          type: array
+      required:
+      - defaultSessionType
+      type: object
+    PduSessionType:
+      enum:
+      - IPV4
+      - IPV6
+      - IPV4V6
+      - UNSTRUCTURED
+      - ETHERNET
+      type: string
+    SscModes:
+      example:
+        allowedSscModes:
+        - null
+        - null
+      properties:
+        defaultSscMode:
+          $ref: '#/components/schemas/SscMode'
+        allowedSscModes:
+          items:
+            $ref: '#/components/schemas/SscMode'
+          maxItems: 2
+          minItems: 1
+          type: array
+      required:
+      - defaultSscMode
+      type: object
+    SscMode:
+      enum:
+      - SSC_MODE_1
+      - SSC_MODE_2
+      - SSC_MODE_3
+      type: string
+    SubscribedDefaultQos:
+      example:
+        priorityLevel: 126
+        "5qi": 126
+        arp:
+          priorityLevel: 8
+      properties:
+        "5qi":
+          format: int32
+          maximum: 255
+          minimum: 0
+          type: integer
+        arp:
+          $ref: '#/components/schemas/Arp'
+        priorityLevel:
+          format: int32
+          maximum: 127
+          minimum: 1
+          type: integer
+      required:
+      - 5qi
+      - arp
+      type: object
+    Arp:
+      example:
+        priorityLevel: 8
+      properties:
+        priorityLevel:
+          format: int32
+          maximum: 15
+          minimum: 1
+          nullable: true
+          type: integer
+        preemptCap:
+          $ref: '#/components/schemas/PreemptionCapability'
+        preemptVuln:
+          $ref: '#/components/schemas/PreemptionVulnerability'
+      required:
+      - preemptCap
+      - preemptVuln
+      - priorityLevel
+      type: object
+    PreemptionCapability:
+      enum:
+      - NOT_PREEMPT
+      - MAY_PREEMPT
+      type: string
+    PreemptionVulnerability:
+      enum:
+      - NOT_PREEMPTABLE
+      - PREEMPTABLE
+      type: string
+    Ambr:
+      example:
+        uplink: uplink
+        downlink: downlink
+      properties:
+        uplink:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        downlink:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+      required:
+      - downlink
+      - uplink
+      type: object
+    IpAddress:
+      example:
+        ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+        ipv4Addr: 198.51.100.1
+        ipv6Prefix: 2001:db8:abcd:12::0/64
+      oneOf:
+      - required:
+        - ipv4Address
+      - required:
+        - ipv6Address
+      - required:
+        - ipv6Prefix
+      properties:
+        ipv4Addr:
+          example: 198.51.100.1
+          pattern: ^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$
+          type: string
+        ipv6Addr:
+          $ref: '#/components/schemas/Ipv6Addr_2'
+        ipv6Prefix:
+          $ref: '#/components/schemas/Ipv6Prefix_2'
+      type: object
+    Ipv6Addr_2:
+      allOf:
+      - pattern: ^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))$
+      - pattern: ^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))$
+      example: 2001:db8:85a3::8a2e:370:7334
+      type: string
+    Ipv6Prefix_2:
+      allOf:
+      - pattern: ^((:|(0?|([1-9a-f][0-9a-f]{0,3}))):)((0?|([1-9a-f][0-9a-f]{0,3})):){0,6}(:|(0?|([1-9a-f][0-9a-f]{0,3})))(\/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-8])))$
+      - pattern: ^((([^:]+:){7}([^:]+))|((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?))(\/.+)$
+      example: 2001:db8:abcd:12::0/64
+      type: string
+    UpSecurity:
+      example: {}
+      properties:
+        upIntegr:
+          $ref: '#/components/schemas/UpIntegrity'
+        upConfid:
+          $ref: '#/components/schemas/UpConfidentiality'
+      required:
+      - upConfid
+      - upIntegr
+      type: object
+    UpIntegrity:
+      enum:
+      - REQUIRED
+      - PREFERRED
+      - NOT_NEEDED
+      type: string
+    UpConfidentiality:
+      enum:
+      - REQUIRED
+      - PREFERRED
+      - NOT_NEEDED
+      type: string
+    TraceData_2:
+      example:
+        eventList: eventList
+        collectionEntityIpv6Addr: 2001:db8:85a3::8a2e:370:7334
+        collectionEntityIpv4Addr: 198.51.100.1
+        traceRef: traceRef
+        interfaceList: interfaceList
+        neTypeList: neTypeList
+      nullable: true
+      properties:
+        traceRef:
+          pattern: ^[0-9]{3}[0-9]{2,3}-[A-Fa-f0-9]{6}$
+          type: string
+        traceDepth:
+          $ref: '#/components/schemas/TraceDepth_2'
+        neTypeList:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        eventList:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        collectionEntityIpv4Addr:
+          example: 198.51.100.1
+          pattern: ^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$
+          type: string
+        collectionEntityIpv6Addr:
+          $ref: '#/components/schemas/Ipv6Addr_2'
+        interfaceList:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+      required:
+      - eventList
+      - neTypeList
+      - traceDepth
+      - traceRef
+      type: object
+    TraceDepth_2:
+      enum:
+      - MINIMUM
+      - MEDIUM
+      - MAXIMUM
+      - MINIMUM_WO_VENDOR_EXTENSION
+      - MEDIUM_WO_VENDOR_EXTENSION
+      - MAXIMUM_WO_VENDOR_EXTENSION
+      type: string
+    SnssaiInfo:
+      example:
+        dnnInfos:
+        - defaultDnnIndicator: true
+          iwkEpsInd: true
+          dnn: dnn
+          lboRoamingAllowed: true
+          ladnIndicator: true
+        - defaultDnnIndicator: true
+          iwkEpsInd: true
+          dnn: dnn
+          lboRoamingAllowed: true
+          ladnIndicator: true
+      properties:
+        dnnInfos:
+          items:
+            $ref: '#/components/schemas/DnnInfo'
+          minItems: 1
+          type: array
+      required:
+      - dnnInfos
+      type: object
+    DnnInfo:
+      example:
+        defaultDnnIndicator: true
+        iwkEpsInd: true
+        dnn: dnn
+        lboRoamingAllowed: true
+        ladnIndicator: true
+      properties:
+        dnn:
+          type: string
+        defaultDnnIndicator:
+          type: boolean
+        lboRoamingAllowed:
+          type: boolean
+        iwkEpsInd:
+          type: boolean
+        ladnIndicator:
+          type: boolean
+      required:
+      - dnn
+      type: object
+    SharedAuthenticationSubscription_2:
+      example:
+        authenticationManagementField: authenticationManagementField
+        milenage:
+          op:
+            encryptionKey: 1
+            opValue: opValue
+            encryptionAlgorithm: 5
+          constants:
+            c3: c3
+            c4: c4
+            c5: c5
+            c1: c1
+            c2: c2
+          rotations:
+            r2: r2
+            r3: r3
+            r4: r4
+            r5: r5
+            r1: r1
+        tuak:
+          keccakIterations: 180
+          top:
+            topValue: topValue
+            encryptionKey: 5
+            encryptionAlgorithm: 2
+      properties:
+        authenticationManagementField:
+          pattern: ^[A-Fa-f0-9]{4}$
+          type: string
+        vectorAlgorithm:
+          $ref: '#/components/schemas/VectorAlgorithm'
+        milenage:
+          $ref: '#/components/schemas/Milenage'
+        tuak:
+          $ref: '#/components/schemas/Tuak'
+      required:
+      - authenticationMethod
+      - vectorAlgorithm
+      type: object
+    SessionManagementSubscriptionData:
+      example:
+        dnnConfigurations:
+          key:
+            iwkEpsInd: true
+            sessionAmbr:
+              uplink: uplink
+              downlink: downlink
+            "5gQosProfile":
+              priorityLevel: 126
+              "5qi": 126
+              arp:
+                priorityLevel: 8
+            upSecurity: {}
+            sscModes:
+              allowedSscModes:
+              - null
+              - null
+            "3gppChargingCharacteristics": 3gppChargingCharacteristics
+            pduSessionTypes:
+              allowedSessionTypes:
+              - null
+              - null
+            ladnIndicator: true
+            staticIpAddress:
+            - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+              ipv4Addr: 198.51.100.1
+              ipv6Prefix: 2001:db8:abcd:12::0/64
+            - ipv6Addr: 2001:db8:85a3::8a2e:370:7334
+              ipv4Addr: 198.51.100.1
+              ipv6Prefix: 2001:db8:abcd:12::0/64
+        sharedDnnConfigurationsIds: sharedDnnConfigurationsIds
+        singleNssai:
+          sd: sd
+          sst: 188
+        internalGroupIds:
+        - null
+        - null
+      properties:
+        singleNssai:
+          $ref: '#/components/schemas/Snssai_2'
+        dnnConfigurations:
+          additionalProperties:
+            $ref: '#/components/schemas/DnnConfiguration'
+          description: A map (list of key-value pairs where Dnn serves as key) of
+            DnnConfigurations
+          type: object
+        internalGroupIds:
+          items:
+            $ref: '#/components/schemas/GroupId'
+          minItems: 1
+          type: array
+        sharedDnnConfigurationsIds:
+          pattern: ^[0-9]{5,6}-.+$
+          type: string
+      required:
+      - singleNssai
+      type: object
+    SmfSelectionSubscriptionData:
+      example:
+        supportedFeatures: supportedFeatures
+        subscribedSnssaiInfos:
+          key:
+            dnnInfos:
+            - defaultDnnIndicator: true
+              iwkEpsInd: true
+              dnn: dnn
+              lboRoamingAllowed: true
+              ladnIndicator: true
+            - defaultDnnIndicator: true
+              iwkEpsInd: true
+              dnn: dnn
+              lboRoamingAllowed: true
+              ladnIndicator: true
+        sharedSnssaiInfosId: sharedSnssaiInfosId
+      properties:
+        supportedFeatures:
+          pattern: ^[A-Fa-f0-9]*$
+          type: string
+        subscribedSnssaiInfos:
+          additionalProperties:
+            $ref: '#/components/schemas/SnssaiInfo'
+          type: object
+        sharedSnssaiInfosId:
+          pattern: ^[0-9]{5,6}-.+$
+          type: string
+      type: object
+    AmPolicyData:
+      description: Contains the AM policy data for a given subscriber.
+      example:
+        subscCats:
+        - subscCats
+        - subscCats
+      properties:
+        subscCats:
+          items:
+            type: string
+          minItems: 1
+          type: array
+      type: object
+    SmPolicyData:
+      description: Contains the SM policy data for a given subscriber.
+      example:
+        umData:
+          key:
+            allowedUsage:
+              duration: 0
+              totalVolume: 0
+              downlinkVolume: 0
+              uplinkVolume: 0
+            limitId: limitId
+            scopes:
+              key:
+                snssai:
+                  sd: sd
+                  sst: 188
+                dnn:
+                - null
+                - null
+            resetTime:
+              maxNumPeriod: 0
+        umDataLimits:
+          key:
+            resetPeriod: 2000-01-23T04:56:07.000+0000
+            endDate: 2000-01-23T04:56:07.000+0000
+            usageLimit:
+              duration: 0
+              totalVolume: 0
+              downlinkVolume: 0
+              uplinkVolume: 0
+            limitId: limitId
+            scopes:
+              key:
+                snssai:
+                  sd: sd
+                  sst: 188
+                dnn:
+                - null
+                - null
+            startDate: 2000-01-23T04:56:07.000+0000
+        smPolicySnssaiData:
+          key:
+            smPolicyDnnData:
+              key:
+                adcSupport: true
+                dnn: dnn
+                ipv4Index: 0
+                gbrDl: gbrDl
+                subscSpendingLimits: true
+                chfInfo:
+                  secondaryChfAddress: secondaryChfAddress
+                  primaryChfAddress: primaryChfAddress
+                refUmDataLimitIds:
+                  key:
+                    monkey:
+                    - monkey
+                    - monkey
+                    limitId: limitId
+                offline: true
+                allowedServices:
+                - allowedServices
+                - allowedServices
+                mpsPriority: true
+                imsSignallingPrio: true
+                subscCats:
+                - subscCats
+                - subscCats
+                gbrUl: gbrUl
+                ipv6Index: 6
+                online: true
+                mpsPriorityLevel: 1
+            snssai:
+              sd: sd
+              sst: 188
+      properties:
+        smPolicySnssaiData:
+          additionalProperties:
+            $ref: '#/components/schemas/SmPolicySnssaiData'
+          minProperties: 1
+          type: object
+        umDataLimits:
+          additionalProperties:
+            $ref: '#/components/schemas/UsageMonDataLimit'
+          minProperties: 1
+          type: object
+        umData:
+          additionalProperties:
+            $ref: '#/components/schemas/UsageMonData'
+          minProperties: 1
+          type: object
+      required:
+      - smPolicySnssaiData
+      type: object
+    SmPolicySnssaiData:
+      description: Contains the SM policy data for a given subscriber and S-NSSAI.
+      example:
+        smPolicyDnnData:
+          key:
+            adcSupport: true
+            dnn: dnn
+            ipv4Index: 0
+            gbrDl: gbrDl
+            subscSpendingLimits: true
+            chfInfo:
+              secondaryChfAddress: secondaryChfAddress
+              primaryChfAddress: primaryChfAddress
+            refUmDataLimitIds:
+              key:
+                monkey:
+                - monkey
+                - monkey
+                limitId: limitId
+            offline: true
+            allowedServices:
+            - allowedServices
+            - allowedServices
+            mpsPriority: true
+            imsSignallingPrio: true
+            subscCats:
+            - subscCats
+            - subscCats
+            gbrUl: gbrUl
+            ipv6Index: 6
+            online: true
+            mpsPriorityLevel: 1
+        snssai:
+          sd: sd
+          sst: 188
+      properties:
+        snssai:
+          $ref: '#/components/schemas/Snssai_2'
+        smPolicyDnnData:
+          additionalProperties:
+            $ref: '#/components/schemas/SmPolicyDnnData'
+          minProperties: 1
+          type: object
+      required:
+      - snssai
+      type: object
+    SmPolicyDnnData:
+      description: Contains the SM policy data for a given DNN (and S-NSSAI).
+      example:
+        adcSupport: true
+        dnn: dnn
+        ipv4Index: 0
+        gbrDl: gbrDl
+        subscSpendingLimits: true
+        chfInfo:
+          secondaryChfAddress: secondaryChfAddress
+          primaryChfAddress: primaryChfAddress
+        refUmDataLimitIds:
+          key:
+            monkey:
+            - monkey
+            - monkey
+            limitId: limitId
+        offline: true
+        allowedServices:
+        - allowedServices
+        - allowedServices
+        mpsPriority: true
+        imsSignallingPrio: true
+        subscCats:
+        - subscCats
+        - subscCats
+        gbrUl: gbrUl
+        ipv6Index: 6
+        online: true
+        mpsPriorityLevel: 1
+      properties:
+        dnn:
+          type: string
+        allowedServices:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        subscCats:
+          items:
+            type: string
+          minItems: 1
+          type: array
+        gbrUl:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        gbrDl:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        adcSupport:
+          type: boolean
+        subscSpendingLimits:
+          type: boolean
+        ipv4Index:
+          format: int32
+          type: integer
+        ipv6Index:
+          format: int32
+          type: integer
+        offline:
+          type: boolean
+        online:
+          type: boolean
+        chfInfo:
+          $ref: '#/components/schemas/ChargingInformation'
+        refUmDataLimitIds:
+          additionalProperties:
+            $ref: '#/components/schemas/LimitIdToMonitoringKey'
+          minProperties: 1
+          type: object
+        mpsPriority:
+          type: boolean
+        imsSignallingPrio:
+          type: boolean
+        mpsPriorityLevel:
+          format: int32
+          type: integer
+      required:
+      - dnn
+      type: object
+    ChargingInformation:
+      example:
+        secondaryChfAddress: secondaryChfAddress
+        primaryChfAddress: primaryChfAddress
+      properties:
+        primaryChfAddress:
+          description: string providing an URI formatted according to IETF RFC 3986.
+          type: string
+        secondaryChfAddress:
+          description: string providing an URI formatted according to IETF RFC 3986.
+          type: string
+      required:
+      - primaryChfAddress
+      - secondaryChfAddress
+      type: object
+    LimitIdToMonitoringKey:
+      description: Contains the limit identifier and the corresponding monitoring
+        key for a given S-NSSAI and DNN.
+      example:
+        monkey:
+        - monkey
+        - monkey
+        limitId: limitId
+      properties:
+        limitId:
+          type: string
+        monkey:
+          items:
+            type: string
+          minItems: 1
+          type: array
+      required:
+      - limitId
+      type: object
+    UsageMonDataLimit:
+      description: Contains usage monitoring control data for a subscriber.
+      example:
+        resetPeriod: 2000-01-23T04:56:07.000+0000
+        endDate: 2000-01-23T04:56:07.000+0000
+        usageLimit:
+          duration: 0
+          totalVolume: 0
+          downlinkVolume: 0
+          uplinkVolume: 0
+        limitId: limitId
+        scopes:
+          key:
+            snssai:
+              sd: sd
+              sst: 188
+            dnn:
+            - null
+            - null
+        startDate: 2000-01-23T04:56:07.000+0000
+      properties:
+        limitId:
+          type: string
+        scopes:
+          additionalProperties:
+            $ref: '#/components/schemas/UsageMonDataScope'
+          minProperties: 1
+          type: object
+        umLevel:
+          $ref: '#/components/schemas/UsageMonLevel'
+        startDate:
+          format: date-time
+          type: string
+        endDate:
+          format: date-time
+          type: string
+        usageLimit:
+          $ref: '#/components/schemas/UsageThreshold'
+        resetPeriod:
+          format: date-time
+          type: string
+      required:
+      - limitId
+      type: object
+    UsageMonDataScope:
+      description: Contains a SNSSAI and DNN combinations to which the UsageMonData
+        instance belongs to.
+      example:
+        snssai:
+          sd: sd
+          sst: 188
+        dnn:
+        - null
+        - null
+      properties:
+        snssai:
+          $ref: '#/components/schemas/Snssai_2'
+        dnn:
+          items:
+            $ref: '#/components/schemas/Dnn'
+          minItems: 1
+          type: array
+      required:
+      - snssai
+      type: object
+    Dnn:
+      type: string
+    UsageMonLevel:
+      enum:
+      - SESSION_LEVEL
+      - SERVICE_LEVEL
+      type: string
+    UsageThreshold:
+      example:
+        duration: 0
+        totalVolume: 0
+        downlinkVolume: 0
+        uplinkVolume: 0
+      properties:
+        duration:
+          description: Unsigned integer identifying a period of time in units of seconds.
+          format: int32
+          minimum: 0
+          type: integer
+        totalVolume:
+          description: Unsigned integer identifying a volume in units of bytes.
+          format: int64
+          minimum: 0
+          type: integer
+        downlinkVolume:
+          description: Unsigned integer identifying a volume in units of bytes.
+          format: int64
+          minimum: 0
+          type: integer
+        uplinkVolume:
+          description: Unsigned integer identifying a volume in units of bytes.
+          format: int64
+          minimum: 0
+          type: integer
+      type: object
+    UsageMonData:
+      description: Contains remain allowed usage data for a subscriber.
+      example:
+        allowedUsage:
+          duration: 0
+          totalVolume: 0
+          downlinkVolume: 0
+          uplinkVolume: 0
+        limitId: limitId
+        scopes:
+          key:
+            snssai:
+              sd: sd
+              sst: 188
+            dnn:
+            - null
+            - null
+        resetTime:
+          maxNumPeriod: 0
+      properties:
+        limitId:
+          type: string
+        scopes:
+          additionalProperties:
+            $ref: '#/components/schemas/UsageMonDataScope'
+          minProperties: 1
+          type: object
+        umLevel:
+          $ref: '#/components/schemas/UsageMonLevel'
+        allowedUsage:
+          $ref: '#/components/schemas/UsageThreshold'
+        resetTime:
+          $ref: '#/components/schemas/TimePeriod'
+      required:
+      - limitId
+      type: object
+    TimePeriod:
+      description: Contains the periodicity for the defined usage monitoring data
+        limits.
+      example:
+        maxNumPeriod: 0
+      properties:
+        period:
+          $ref: '#/components/schemas/Periodicity'
+        maxNumPeriod:
+          format: int32
+          minimum: 0
+          type: integer
+      required:
+      - period
+      type: object
+    Periodicity:
+      enum:
+      - YEARLY
+      - MONTHLY
+      - WEEKLY
+      - DAILY
+      - HOURLY
+      type: string
+    SessionRule:
+      nullable: true
+      properties:
+        authSessAmbr:
+          $ref: '#/components/schemas/Ambr_2'
+        authDefQos:
+          $ref: '#/components/schemas/AuthorizedDefaultQos'
+        sessRuleId:
+          description: Univocally identifies the session rule within a PDU session.
+          type: string
+        refUmData:
+          description: A reference to UsageMonitoringData policy decision type. It
+            is the umId described in subclause 5.6.2.12.
+          nullable: true
+          type: string
+        refUmN3gData:
+          description: A reference to UsageMonitoringData policy decision type to
+            apply for Non-3GPP access. It is the umId described in subclause 5.6.2.12.
+          nullable: true
+          type: string
+        refCondData:
+          description: A reference to the condition data. It is the condId described
+            in subclause 5.6.2.9.
+          nullable: true
+          type: string
+      required:
+      - sessRuleId
+      type: object
+    AuthorizedDefaultQos:
+      properties:
+        "5qi":
+          maximum: 255
+          minimum: 0
+          type: integer
+        arp:
+          $ref: '#/components/schemas/Arp_2'
+        priorityLevel:
+          maximum: 127
+          minimum: 1
+          nullable: true
+          type: integer
+        averWindow:
+          default: 2000
+          maximum: 4095
+          minimum: 1
+          nullable: true
+          type: integer
+        maxDataBurstVol:
+          maximum: 4095
+          minimum: 1
+          nullable: true
+          type: integer
+        maxbrUl:
+          nullable: true
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        maxbrDl:
+          nullable: true
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        gbrUl:
+          nullable: true
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        gbrDl:
+          nullable: true
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        qnc:
+          description: Indicates whether notifications are requested from 3GPP NG-RAN
+            when the GFBR can no longer (or again) be guaranteed for a QoS Flow during
+            the lifetime of the QoS Flow.
+          type: boolean
+        extMaxDataBurstVol:
+          maximum: 2000000
+          minimum: 4096
+          nullable: true
+          type: integer
+      type: object
+    GlobalRanNodeId:
+      oneOf:
+      - required:
+        - n3IwfId
+      - required:
+        - gNbId
+      - required:
+        - ngeNbId
+      - required:
+        - wagfId
+      - required:
+        - tngfId
+      - required:
+        - eNbId
+      properties:
+        plmnId:
+          $ref: '#/components/schemas/PlmnId'
+        n3IwfId:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        gNbId:
+          $ref: '#/components/schemas/GNbId'
+        ngeNbId:
+          pattern: ^(MacroNGeNB-[A-Fa-f0-9]{5}|LMacroNGeNB-[A-Fa-f0-9]{6}|SMacroNGeNB-[A-Fa-f0-9]{5})$
+          type: string
+        wagfId:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        tngfId:
+          pattern: ^[A-Fa-f0-9]+$
+          type: string
+        nid:
+          pattern: ^[A-Fa-f0-9]{11}$
+          type: string
+        eNbId:
+          pattern: ^(MacroeNB-[A-Fa-f0-9]{5}|LMacroeNB-[A-Fa-f0-9]{6}|SMacroeNB-[A-Fa-f0-9]{5}|HomeeNB-[A-Fa-f0-9]{7})$
+          type: string
+      required:
+      - plmnId
+      type: object
+    PlmnId:
+      properties:
+        mcc:
+          pattern: ^\d{3}$
+          type: string
+        mnc:
+          pattern: ^\d{2,3}$
+          type: string
+      required:
+      - mcc
+      - mnc
+      type: object
+    Mcc:
+      pattern: ^\d{3}$
+      type: string
+    Mnc:
+      pattern: ^\d{2,3}$
+      type: string
+    N3IwfId:
+      pattern: ^[A-Fa-f0-9]+$
+      type: string
+    GNbId:
+      properties:
+        bitLength:
+          maximum: 32
+          minimum: 22
+          type: integer
+        gNBValue:
+          pattern: ^[A-Fa-f0-9]{6,8}$
+          type: string
+      required:
+      - bitLength
+      - gNBValue
+      type: object
+    NgeNbId:
+      pattern: ^(MacroNGeNB-[A-Fa-f0-9]{5}|LMacroNGeNB-[A-Fa-f0-9]{6}|SMacroNGeNB-[A-Fa-f0-9]{5})$
+      type: string
+    WAgfId:
+      pattern: ^[A-Fa-f0-9]+$
+      type: string
+    TngfId:
+      pattern: ^[A-Fa-f0-9]+$
+      type: string
+    Nid:
+      pattern: ^[A-Fa-f0-9]{11}$
+      type: string
+    ENbId:
+      pattern: ^(MacroeNB-[A-Fa-f0-9]{5}|LMacroeNB-[A-Fa-f0-9]{6}|SMacroeNB-[A-Fa-f0-9]{5}|HomeeNB-[A-Fa-f0-9]{7})$
+      type: string
+    Tai:
+      properties:
+        plmnId:
+          $ref: '#/components/schemas/PlmnId'
+        tac:
+          pattern: (^[A-Fa-f0-9]{4}$)|(^[A-Fa-f0-9]{6}$)
+          type: string
+        nid:
+          pattern: ^[A-Fa-f0-9]{11}$
+          type: string
+      required:
+      - plmnId
+      - tac
+      type: object
+    Ambr_2:
+      properties:
+        uplink:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+        downlink:
+          pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+          type: string
+      required:
+      - downlink
+      - uplink
+      type: object
+    BitRate:
+      pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+      type: string
+    "5Qi":
+      maximum: 255
+      minimum: 0
+      type: integer
+    Arp_2:
+      properties:
+        priorityLevel:
+          description: nullable true shall not be used for this attribute
+          maximum: 15
+          minimum: 1
+          nullable: true
+          type: integer
+        preemptCap:
+          $ref: '#/components/schemas/PreemptionCapability_2'
+        preemptVuln:
+          $ref: '#/components/schemas/PreemptionVulnerability_2'
+      required:
+      - preemptCap
+      - preemptVuln
+      - priorityLevel
+      type: object
+    ArpPriorityLevel:
+      description: nullable true shall not be used for this attribute
+      maximum: 15
+      minimum: 1
+      nullable: true
+      type: integer
+    PreemptionCapability_2:
+      anyOf:
+      - enum:
+        - NOT_PREEMPT
+        - MAY_PREEMPT
+        type: string
+      - type: string
+    PreemptionVulnerability_2:
+      anyOf:
+      - enum:
+        - NOT_PREEMPTABLE
+        - PREEMPTABLE
+        type: string
+      - type: string
+    "5QiPriorityLevelRm":
+      maximum: 127
+      minimum: 1
+      nullable: true
+      type: integer
+    AverWindowRm:
+      default: 2000
+      maximum: 4095
+      minimum: 1
+      nullable: true
+      type: integer
+    MaxDataBurstVolRm:
+      maximum: 4095
+      minimum: 1
+      nullable: true
+      type: integer
+    BitRateRm:
+      nullable: true
+      pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
+      type: string
+    ExtMaxDataBurstVolRm:
+      maximum: 2000000
+      minimum: 4096
+      nullable: true
+      type: integer

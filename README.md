@@ -1,30 +1,22 @@
-# api-gw
+# 5GC API 服务器
 
 ## 环境需求
-- Go 1.15.4 or later
+- Go 1.15.4 或更新的版本
+- openapi-generator 5.0.0-beta3 或更新的版本
 
-这个项目目的为协助前端开发时，有一个 PISC API GW 模拟器可以测试使用
+Edgecore 5GC API 服务器. 更多关于 5GC API 的细节可以参考
+[5GC API 文件](https://app.swaggerhub.com/apis-docs/breezestars/5gc/1.0.0).
 
-pisc-api-gw 启动时，可针对 port :8080 进行 API 操作
 
-API 文件请参阅
+## 概况
+- API version: 1.0.0
+- Build date: 2020-12-14T01:12:40.970586+08:00[Asia/Taipei]
 
-https://app.swaggerhub.com/apis-docs/breezestars/pisc-proto/1.0
+### 执行服务器
+要执行服务器，请参照下列步骤
 
-### Execute
 ```
-// 执行已编译档
-./pisc-api-gw
+go run main.go
 ```
 
-### Command
-```
-// 编译模拟器，产生只能于 Linux 上执行的 pisc-api-gw
-make
 
-// 编译 proto 产生需要的代码
-make proto
-
-// 清除 pisc-api-gw 与 proto 产生的代码
-make clean
-```
