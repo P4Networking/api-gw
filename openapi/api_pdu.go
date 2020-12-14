@@ -11,17 +11,101 @@
 package openapi
 
 import (
-	"net/http"
-
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
 )
 
 // UePduSessionInfoGet - Get all PDU
 func UePduSessionInfoGet(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+	pdus := make([]PduSessionInfo, 0)
+	for _, v := range UEs {
+		if v.Online {
+			for _, subs := range Subscribers {
+				if subs.UeId == v.UeId && subs.PlmnId == v.PlmnId {
+
+					pdus = append(pdus, PduSessionInfo{
+						Supi:         subs.UeId,
+						PDUSessionID: "1",
+						Dnn:          subs.SmPolicyData.SmPolicySnssaiData["01010203"].SmPolicyDnnData["internet"].Dnn,
+						Sst:          "010203",
+						Sd:           "1",
+						AnType:       "3GPP_ACCESS",
+						PDUAddress:   "60.60.0.1",
+						SessionRule:  &SessionRule{},
+						UpCnxState:   "",
+					})
+				}
+			}
+		}
+	}
+	c.JSON(http.StatusOK, pdus)
 }
 
 // UePduSessionInfoSmContextRefGet - Get specific PDU content
 func UePduSessionInfoSmContextRefGet(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+	smContextRef := c.Param("smContextRef")
+	fmt.Printf("Got smContextRef: %v\n", smContextRef)
+
+	ueCtxs := make([]UeContext, 0)
+	for _, v := range UEs {
+		if v.Online {
+			for _, subs := range Subscribers {
+				if subs.UeId == v.UeId && subs.PlmnId == v.PlmnId {
+					ueCtxs = append(ueCtxs, UeContext{
+						AccessType: "3GPP_ACCESS",
+						Supi:       subs.UeId,
+						Guti:       strconv.Itoa(int(v.PlmnId)) + "cafe0000000" + v.UeId[len(v.UeId)-2:],
+						Mcc:        strconv.Itoa(int(v.PlmnId))[:3],
+						Mnc:        strconv.Itoa(int(v.PlmnId))[3:],
+						Tac:        strconv.Itoa(int(subs.PlmnId)),
+						PduSessions: []UeContextPduSessions{{
+							PduSessionId: "1",
+							SmContextRef: "urn:uuid:a37b276f-d8d2-4ad6-afd1-f3cb60ff1a80",
+							Sst:          strconv.Itoa(int(subs.AccessAndMobilitySubscriptionData.Nssai.DefaultSingleNssais[0].Sst)),
+							Sd:           subs.AccessAndMobilitySubscriptionData.Nssai.DefaultSingleNssais[0].Sd,
+							Dnn:          subs.SmPolicyData.SmPolicySnssaiData["01010203"].SmPolicyDnnData["internet"].Dnn,
+						}},
+						CmState: "CONNECTED",
+					})
+				}
+			}
+		}
+	}
+
+	pdus := make([]PduSessionInfo, 0)
+	for _, v := range UEs {
+		if v.Online {
+			for _, subs := range Subscribers {
+				if subs.UeId == v.UeId && subs.PlmnId == v.PlmnId {
+
+					pdus = append(pdus, PduSessionInfo{
+						Supi:         subs.UeId,
+						PDUSessionID: "1",
+						Dnn:          subs.SmPolicyData.SmPolicySnssaiData["01010203"].SmPolicyDnnData["internet"].Dnn,
+						Sst:          "010203",
+						Sd:           "1",
+						AnType:       "3GPP_ACCESS",
+						PDUAddress:   "60.60.0.1",
+						SessionRule:  &SessionRule{},
+						UpCnxState:   "",
+					})
+				}
+			}
+		}
+	}
+
+	for _, v := range ueCtxs {
+		if v.PduSessions[0].SmContextRef == smContextRef {
+			for _, pdu := range pdus {
+				if v.Supi == pdu.Supi {
+					c.JSON(http.StatusOK, pdu)
+					return
+				}
+			}
+		}
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{})
 }

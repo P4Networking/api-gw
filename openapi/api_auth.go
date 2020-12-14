@@ -11,12 +11,26 @@
 package openapi
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-// AuthLogonPost - Authentication login
-func AuthLogonPost(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+// AuthLoginPost - Authentication login
+func AuthLoginPost(c *gin.Context) {
+
+	var loginData LoginData
+	if err := c.ShouldBindJSON(&loginData); err != nil {
+		panic(err)
+	}
+	fmt.Printf("Got username: %v, password: %v from request\n", loginData.Username, loginData.Password)
+
+	for _, v := range UserDB {
+		if loginData.Username == v.Username && loginData.Password == v.Password {
+			c.JSON(http.StatusOK, gin.H{})
+			return
+		}
+	}
+	c.JSON(http.StatusForbidden, gin.H{})
 }

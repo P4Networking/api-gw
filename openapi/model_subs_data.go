@@ -12,7 +12,7 @@ package openapi
 
 type SubsData struct {
 
-	PlmnId string `json:"plmnId,omitempty"`
+	PlmnId int32 `json:"plmnId,omitempty"`
 
 	UeId string `json:"ueId,omitempty"`
 

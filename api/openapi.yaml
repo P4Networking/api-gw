@@ -27,8 +27,13 @@ tags:
 - name: UE
 - name: Sample
 paths:
-  /auth/logon:
+  /auth/login:
     post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginData'
       responses:
         "405":
           description: Invalid input
@@ -47,12 +52,39 @@ paths:
               - plmnId: 20893
                 udId: imsi-208930000000004
               schema:
-                $ref: '#/components/schemas/SubsListIE'
+                $ref: '#/components/schemas/SubsIEList'
           description: successful operation
       summary: Get subscribers list
       tags:
       - Subscriber
   /subscriber/{ueId}/{servingPlmnId}:
+    delete:
+      parameters:
+      - description: ID of UE
+        explode: false
+        in: path
+        name: ueId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: ID of serving PLMN
+        explode: false
+        in: path
+        name: servingPlmnId
+        required: true
+        schema:
+          format: int32
+          type: integer
+        style: simple
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: UE not found
+      summary: Deletes a subscriber
+      tags:
+      - Subscriber
     get:
       parameters:
       - description: ID of UE
@@ -61,8 +93,7 @@ paths:
         name: ueId
         required: true
         schema:
-          format: int64
-          type: integer
+          type: string
         style: simple
       - description: ID of serving PLMN
         explode: false
@@ -70,7 +101,7 @@ paths:
         name: servingPlmnId
         required: true
         schema:
-          format: int64
+          format: int32
           type: integer
         style: simple
       responses:
@@ -91,8 +122,7 @@ paths:
         name: ueId
         required: true
         schema:
-          format: int64
-          type: integer
+          type: string
         style: simple
       - description: ID of serving PLMN
         explode: false
@@ -100,7 +130,7 @@ paths:
         name: servingPlmnId
         required: true
         schema:
-          format: int64
+          format: int32
           type: integer
         style: simple
       requestBody:
@@ -112,35 +142,6 @@ paths:
         "405":
           description: Invalid input
       summary: Add/Update subscribe
-      tags:
-      - Subscriber
-  /subscriber/del/{ueId}/{servingPlmnId}:
-    delete:
-      parameters:
-      - description: ID of UE
-        explode: false
-        in: path
-        name: ueId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      - description: ID of serving PLMN
-        explode: false
-        in: path
-        name: servingPlmnId
-        required: true
-        schema:
-          format: int64
-          type: integer
-        style: simple
-      responses:
-        "400":
-          description: Invalid ID supplied
-        "404":
-          description: UE not found
-      summary: Deletes a subscriber
       tags:
       - Subscriber
   /sample/subscriber:
@@ -165,7 +166,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UEContext'
+                $ref: '#/components/schemas/UEContextList'
           description: successful operation
       summary: Get UE status
       tags:
@@ -198,7 +199,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PDUSessionInfo'
+                $ref: '#/components/schemas/PDUSessionInfoList'
           description: successful operation
       summary: Get all PDU
       tags:
@@ -231,18 +232,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RANInfo'
+                $ref: '#/components/schemas/RANInfoList'
           description: successful operation
       summary: Get all RAN
       tags:
       - RAN
-  /ran/{ranId}:
+  /ran/{gNbId}:
     get:
       parameters:
-      - description: ID of RAN
+      - description: ID of gNB
         explode: false
         in: path
-        name: ranId
+        name: gNbId
         required: true
         schema:
           type: string
@@ -259,14 +260,29 @@ paths:
       - RAN
 components:
   schemas:
-    SubsListIE:
+    LoginData:
+      example:
+        password: password
+        username: username
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      type: object
+    SubsIE:
+      example:
+        plmnId: plmnId
+        ueId: ueId
+      properties:
+        plmnId:
+          type: string
+        ueId:
+          type: string
+      type: object
+    SubsIEList:
       items:
-        properties:
-          plmnId:
-            type: string
-          ueId:
-            type: string
-        type: object
+        $ref: '#/components/schemas/SubsIE'
       type: array
     SubsData:
       example:
@@ -589,7 +605,7 @@ components:
               snssai:
                 sd: sd
                 sst: 188
-        plmnId: plmnId
+        plmnId: 0
         accessAndMobilitySubscriptionData:
           supportedFeatures: supportedFeatures
           mcsPriority: true
@@ -661,7 +677,7 @@ components:
           - subscCats
       properties:
         plmnId:
-          type: string
+          type: integer
         ueId:
           type: string
         authenticationSubscription:
@@ -678,110 +694,177 @@ components:
           $ref: '#/components/schemas/SmPolicyData'
       type: object
     UEContext:
+      example:
+        accessType: accessType
+        pduSessions:
+        - sd: sd
+          sst: sst
+          dnn: dnn
+          pduSessionId: pduSessionId
+          smContextRef: smContextRef
+        - sd: sd
+          sst: sst
+          dnn: dnn
+          pduSessionId: pduSessionId
+          smContextRef: smContextRef
+        guti: guti
+        mnc: mnc
+        tac: tac
+        cmState: cmState
+        mcc: mcc
+        supi: supi
+      properties:
+        accessType:
+          type: string
+        supi:
+          type: string
+        guti:
+          type: string
+        mcc:
+          type: string
+        mnc:
+          type: string
+        tac:
+          type: string
+        pduSessions:
+          items:
+            $ref: '#/components/schemas/UEContext_pduSessions'
+          type: array
+        cmState:
+          type: string
+      type: object
+    UEContextList:
       items:
-        properties:
-          accessType:
-            type: string
-          supi:
-            type: string
-          guti:
-            type: string
-          mcc:
-            type: string
-          mnc:
-            type: string
-          tac:
-            type: string
-          pduSessions:
-            items:
-              properties:
-                pduSessionId:
-                  type: string
-                smContextRef:
-                  type: string
-                sst:
-                  type: string
-                sd:
-                  type: string
-                dnn:
-                  type: string
-              type: object
-            type: array
-          cmState:
-            type: string
-        type: object
+        $ref: '#/components/schemas/UEContext'
       type: array
     PDUSessionInfo:
+      example:
+        pDUAddress: pDUAddress
+        sd: sd
+        dnn: dnn
+        sst: sst
+        upCnxState: upCnxState
+        pDUSessionID: pDUSessionID
+        sessionRule:
+          refCondData: refCondData
+          authSessAmbr:
+            uplink: uplink
+            downlink: downlink
+          refUmN3gData: refUmN3gData
+          authDefQos:
+            extMaxDataBurstVol: 463580
+            priorityLevel: 19
+            maxDataBurstVol: 2308
+            gbrDl: gbrDl
+            gbrUl: gbrUl
+            qnc: true
+            maxbrDl: maxbrDl
+            "5qi": 20
+            maxbrUl: maxbrUl
+            arp:
+              priorityLevel: 9
+            averWindow: 2441
+          sessRuleId: sessRuleId
+          refUmData: refUmData
+        anType: anType
+        supi: supi
+      properties:
+        supi:
+          type: string
+        pDUSessionID:
+          type: string
+        dnn:
+          type: string
+        sst:
+          type: string
+        sd:
+          type: string
+        anType:
+          type: string
+        pDUAddress:
+          type: string
+        sessionRule:
+          $ref: '#/components/schemas/SessionRule'
+        upCnxState:
+          type: string
+      type: object
+    PDUSessionInfoList:
       items:
-        properties:
-          supi:
-            type: string
-          pDUSessionID:
-            type: string
-          dnn:
-            type: string
-          sst:
-            type: string
-          sd:
-            type: string
-          anType:
-            type: string
-          pDUAddress:
-            type: string
-          sessionRule:
-            $ref: '#/components/schemas/SessionRule'
-          upCnxState:
-            type: string
-        type: object
+        $ref: '#/components/schemas/PDUSessionInfo'
       type: array
     RANInfo:
+      example:
+        conn:
+          address: address
+          port: 1
+        anyType: anyType
+        ranUeList:
+        - amfUeNgapId: 2
+          ranUeNgapId: 5
+        - amfUeNgapId: 2
+          ranUeNgapId: 5
+        supportedTAList:
+        - sNssaiList:
+          - sd: sd
+            sst: 5
+          - sd: sd
+            sst: 5
+          tai:
+            tac: tac
+            nid: nid
+            plmnId:
+              mnc: mnc
+              mcc: mcc
+        - sNssaiList:
+          - sd: sd
+            sst: 5
+          - sd: sd
+            sst: 5
+          tai:
+            tac: tac
+            nid: nid
+            plmnId:
+              mnc: mnc
+              mcc: mcc
+        name: name
+        ranId:
+          eNbId: eNbId
+          wagfId: wagfId
+          tngfId: tngfId
+          gNbId:
+            bitLength: 28
+            gNBValue: gNBValue
+          nid: nid
+          plmnId:
+            mnc: mnc
+            mcc: mcc
+          n3IwfId: n3IwfId
+          ngeNbId: ngeNbId
+        ranPresent: 0
+      properties:
+        ranPresent:
+          format: int
+          type: integer
+        ranId:
+          $ref: '#/components/schemas/GlobalRanNodeId'
+        name:
+          type: string
+        anyType:
+          type: string
+        conn:
+          $ref: '#/components/schemas/RANInfo_conn'
+        supportedTAList:
+          items:
+            $ref: '#/components/schemas/RANInfo_supportedTAList'
+          type: array
+        ranUeList:
+          items:
+            $ref: '#/components/schemas/RANInfo_ranUeList'
+          type: array
+      type: object
+    RANInfoList:
       items:
-        properties:
-          ranPresent:
-            format: int
-            type: integer
-          ranId:
-            $ref: '#/components/schemas/GlobalRanNodeId'
-          name:
-            type: string
-          anyType:
-            type: string
-          conn:
-            properties:
-              address:
-                type: string
-              port:
-                type: integer
-            type: object
-          supportedTAList:
-            items:
-              properties:
-                tai:
-                  $ref: '#/components/schemas/Tai'
-                sNssaiList:
-                  items:
-                    properties:
-                      sst:
-                        format: int32
-                        type: integer
-                      sd:
-                        type: string
-                    type: object
-                  type: array
-              type: object
-            type: array
-          ranUeList:
-            items:
-              properties:
-                ranUeNgapId:
-                  format: int64
-                  type: integer
-                amfUeNgapId:
-                  format: int64
-                  type: integer
-              type: object
-            type: array
-        type: object
+        $ref: '#/components/schemas/RANInfo'
       type: array
     AuthenticationSubscription:
       example:
@@ -2641,6 +2724,27 @@ components:
       - HOURLY
       type: string
     SessionRule:
+      example:
+        refCondData: refCondData
+        authSessAmbr:
+          uplink: uplink
+          downlink: downlink
+        refUmN3gData: refUmN3gData
+        authDefQos:
+          extMaxDataBurstVol: 463580
+          priorityLevel: 19
+          maxDataBurstVol: 2308
+          gbrDl: gbrDl
+          gbrUl: gbrUl
+          qnc: true
+          maxbrDl: maxbrDl
+          "5qi": 20
+          maxbrUl: maxbrUl
+          arp:
+            priorityLevel: 9
+          averWindow: 2441
+        sessRuleId: sessRuleId
+        refUmData: refUmData
       nullable: true
       properties:
         authSessAmbr:
@@ -2669,6 +2773,19 @@ components:
       - sessRuleId
       type: object
     AuthorizedDefaultQos:
+      example:
+        extMaxDataBurstVol: 463580
+        priorityLevel: 19
+        maxDataBurstVol: 2308
+        gbrDl: gbrDl
+        gbrUl: gbrUl
+        qnc: true
+        maxbrDl: maxbrDl
+        "5qi": 20
+        maxbrUl: maxbrUl
+        arp:
+          priorityLevel: 9
+        averWindow: 2441
       properties:
         "5qi":
           maximum: 255
@@ -2720,6 +2837,19 @@ components:
           type: integer
       type: object
     GlobalRanNodeId:
+      example:
+        eNbId: eNbId
+        wagfId: wagfId
+        tngfId: tngfId
+        gNbId:
+          bitLength: 28
+          gNBValue: gNBValue
+        nid: nid
+        plmnId:
+          mnc: mnc
+          mcc: mcc
+        n3IwfId: n3IwfId
+        ngeNbId: ngeNbId
       oneOf:
       - required:
         - n3IwfId
@@ -2760,6 +2890,9 @@ components:
       - plmnId
       type: object
     PlmnId:
+      example:
+        mnc: mnc
+        mcc: mcc
       properties:
         mcc:
           pattern: ^\d{3}$
@@ -2781,6 +2914,9 @@ components:
       pattern: ^[A-Fa-f0-9]+$
       type: string
     GNbId:
+      example:
+        bitLength: 28
+        gNBValue: gNBValue
       properties:
         bitLength:
           maximum: 32
@@ -2809,6 +2945,12 @@ components:
       pattern: ^(MacroeNB-[A-Fa-f0-9]{5}|LMacroeNB-[A-Fa-f0-9]{6}|SMacroeNB-[A-Fa-f0-9]{5}|HomeeNB-[A-Fa-f0-9]{7})$
       type: string
     Tai:
+      example:
+        tac: tac
+        nid: nid
+        plmnId:
+          mnc: mnc
+          mcc: mcc
       properties:
         plmnId:
           $ref: '#/components/schemas/PlmnId'
@@ -2823,6 +2965,9 @@ components:
       - tac
       type: object
     Ambr_2:
+      example:
+        uplink: uplink
+        downlink: downlink
       properties:
         uplink:
           pattern: ^\d+(\.\d+)? (bps|Kbps|Mbps|Gbps|Tbps)$
@@ -2842,6 +2987,8 @@ components:
       minimum: 0
       type: integer
     Arp_2:
+      example:
+        priorityLevel: 9
       properties:
         priorityLevel:
           description: nullable true shall not be used for this attribute
@@ -2903,3 +3050,76 @@ components:
       minimum: 4096
       nullable: true
       type: integer
+    UEContext_pduSessions:
+      example:
+        sd: sd
+        sst: sst
+        dnn: dnn
+        pduSessionId: pduSessionId
+        smContextRef: smContextRef
+      properties:
+        pduSessionId:
+          type: string
+        smContextRef:
+          type: string
+        sst:
+          type: string
+        sd:
+          type: string
+        dnn:
+          type: string
+      type: object
+    RANInfo_conn:
+      example:
+        address: address
+        port: 1
+      properties:
+        address:
+          type: string
+        port:
+          type: integer
+      type: object
+    RANInfo_sNssaiList:
+      example:
+        sd: sd
+        sst: 5
+      properties:
+        sst:
+          format: int32
+          type: integer
+        sd:
+          type: string
+      type: object
+    RANInfo_supportedTAList:
+      example:
+        sNssaiList:
+        - sd: sd
+          sst: 5
+        - sd: sd
+          sst: 5
+        tai:
+          tac: tac
+          nid: nid
+          plmnId:
+            mnc: mnc
+            mcc: mcc
+      properties:
+        tai:
+          $ref: '#/components/schemas/Tai'
+        sNssaiList:
+          items:
+            $ref: '#/components/schemas/RANInfo_sNssaiList'
+          type: array
+      type: object
+    RANInfo_ranUeList:
+      example:
+        amfUeNgapId: 2
+        ranUeNgapId: 5
+      properties:
+        ranUeNgapId:
+          format: int64
+          type: integer
+        amfUeNgapId:
+          format: int64
+          type: integer
+      type: object

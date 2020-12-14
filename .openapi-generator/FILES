@@ -23,11 +23,13 @@ go/model_ip_address.go
 go/model_ipv6_addr_2.go
 go/model_ipv6_prefix_2.go
 go/model_limit_id_to_monitoring_key.go
+go/model_login_data.go
 go/model_milenage.go
 go/model_nssai.go
 go/model_odb_packet_services.go
 go/model_op.go
 go/model_opc.go
+go/model_pdu_session_info.go
 go/model_pdu_session_type.go
 go/model_pdu_session_types.go
 go/model_periodicity.go
@@ -37,6 +39,11 @@ go/model_preemption_capability.go
 go/model_preemption_capability_2.go
 go/model_preemption_vulnerability.go
 go/model_preemption_vulnerability_2.go
+go/model_ran_info.go
+go/model_ran_info_conn.go
+go/model_ran_info_ran_ue_list.go
+go/model_ran_info_s_nssai_list.go
+go/model_ran_info_supported_ta_list.go
 go/model_rat_type.go
 go/model_restriction_type.go
 go/model_rotations.go
@@ -58,6 +65,7 @@ go/model_ssc_mode.go
 go/model_ssc_modes.go
 go/model_steering_container.go
 go/model_subs_data.go
+go/model_subs_ie.go
 go/model_subscribed_default_qos.go
 go/model_tai.go
 go/model_time_period.go
@@ -66,6 +74,8 @@ go/model_topc.go
 go/model_trace_data_2.go
 go/model_trace_depth_2.go
 go/model_tuak.go
+go/model_ue_context.go
+go/model_ue_context_pdu_sessions.go
 go/model_up_confidentiality.go
 go/model_up_integrity.go
 go/model_up_security.go
@@ -76,4 +86,3 @@ go/model_usage_mon_level.go
 go/model_usage_threshold.go
 go/model_vector_algorithm.go
 go/routers.go
-main.go

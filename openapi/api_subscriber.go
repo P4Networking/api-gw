@@ -11,27 +11,77 @@
 package openapi
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// SubscriberDelUeIdServingPlmnIdDelete - Deletes a subscriber
-func SubscriberDelUeIdServingPlmnIdDelete(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+// SubscriberUeIdServingPlmnIdDelete - Deletes a subscriber
+func SubscriberUeIdServingPlmnIdDelete(c *gin.Context) {
+	UEId := c.Param("ueId")
+
+	servingPLMNId, err := strconv.ParseInt(c.Param("servingPlmnId"), 10, 32)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Got UE ID: %v, serving PLMN ID: %v\n", UEId, servingPLMNId)
+
+	for k, v := range Subscribers {
+		if v.UeId == UEId && v.PlmnId == int32(servingPLMNId) {
+			//Copy last value to cover this one
+			Subscribers[k] = Subscribers[len(Subscribers)-1]
+			// Erase last one value
+			Subscribers[len(Subscribers)-1] = SubsData{}
+			// Resize
+			Subscribers = Subscribers[:len(Subscribers)-1]
+			c.JSON(http.StatusOK, gin.H{})
+		}
+	}
+	c.JSON(http.StatusNotFound, gin.H{})
 }
 
 // SubscriberGet - Get subscribers list
 func SubscriberGet(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, Subscribers)
 }
 
 // SubscriberUeIdServingPlmnIdGet - Get specific subscribe context
 func SubscriberUeIdServingPlmnIdGet(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+	UEId := c.Param("ueId")
+
+	servingPLMNId, err := strconv.ParseInt(c.Param("servingPlmnId"), 10, 32)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Got UE ID: %v, serving PLMN ID: %v\n", UEId, servingPLMNId)
+
+	for _, v := range Subscribers {
+		if v.UeId == UEId && v.PlmnId == int32(servingPLMNId) {
+			c.JSON(http.StatusOK, v)
+			return
+		}
+	}
+	c.JSON(http.StatusNotFound, gin.H{})
 }
 
 // SubscriberUeIdServingPlmnIdPost - Add/Update subscribe
 func SubscriberUeIdServingPlmnIdPost(c *gin.Context) {
+	var subsData SubsData
+	if err := c.ShouldBindJSON(&subsData); err != nil {
+		panic(err)
+	}
+	UEId := c.Param("ueId")
+	servingPLMNId, err := strconv.ParseInt(c.Param("servingPlmnId"), 10, 32)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Got UE ID: %v, serving PLMN ID: %v\n", UEId, servingPLMNId)
+
+	Subscribers = append(Subscribers, subsData)
 	c.JSON(http.StatusOK, gin.H{})
 }

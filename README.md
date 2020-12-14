@@ -13,10 +13,19 @@ Edgecore 5GC API 服务器. 更多关于 5GC API 的细节可以参考
 - Build date: 2020-12-14T01:12:40.970586+08:00[Asia/Taipei]
 
 ### 执行服务器
-要执行服务器，请参照下列步骤
+要执行服务器，务必确认同层目录下有 config.json
 
+config.json 内包含模拟用的资料
+
+#### 执行
 ```
+// 未编译的状况下用 go 直接跑
 go run main.go
+
+or
+
+// 执行已编译的档案
+./5gc-api-gw
 ```
 
 

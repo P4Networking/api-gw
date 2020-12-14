@@ -17,5 +17,5 @@ import (
 
 // SampleSubscriberGet - Sample subscriber config
 func SampleSubscriberGet(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusNotImplemented, gin.H{})
 }

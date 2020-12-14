@@ -64,10 +64,10 @@ var routes = Routes{
 	},
 
 	{
-		"AuthLogonPost",
+		"AuthLoginPost",
 		http.MethodPost,
-		"/v1/auth/logon",
-		AuthLogonPost,
+		"/v1/auth/login",
+		AuthLoginPost,
 	},
 
 	{
@@ -85,17 +85,17 @@ var routes = Routes{
 	},
 
 	{
+		"RanGNbIdGet",
+		http.MethodGet,
+		"/v1/ran/:gNbId",
+		RanGNbIdGet,
+	},
+
+	{
 		"RanGet",
 		http.MethodGet,
 		"/v1/ran",
 		RanGet,
-	},
-
-	{
-		"RanRanIdGet",
-		http.MethodGet,
-		"/v1/ran/:ranId",
-		RanRanIdGet,
 	},
 
 	{
@@ -106,17 +106,17 @@ var routes = Routes{
 	},
 
 	{
-		"SubscriberDelUeIdServingPlmnIdDelete",
-		http.MethodDelete,
-		"/v1/subscriber/del/:ueId/:servingPlmnId",
-		SubscriberDelUeIdServingPlmnIdDelete,
-	},
-
-	{
 		"SubscriberGet",
 		http.MethodGet,
 		"/v1/subscriber",
 		SubscriberGet,
+	},
+
+	{
+		"SubscriberUeIdServingPlmnIdDelete",
+		http.MethodDelete,
+		"/v1/subscriber/:ueId/:servingPlmnId",
+		SubscriberUeIdServingPlmnIdDelete,
 	},
 
 	{

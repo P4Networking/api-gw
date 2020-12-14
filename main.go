@@ -11,6 +11,7 @@
 package main
 
 import (
+	"github.com/P4Networking/api-gw/config"
 	"log"
 
 	// WARNING!
@@ -24,6 +25,7 @@ import (
 )
 
 func main() {
+	config.ReadConfig()
 	log.Printf("Server started")
 
 	router := sw.NewRouter()

@@ -11,6 +11,7 @@
 package openapi
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,10 +19,19 @@ import (
 
 // RanGet - Get all RAN
 func RanGet(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, RANs)
 }
 
-// RanRanIdGet - Get specific RAN
-func RanRanIdGet(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+// RanGNbIdGet - Get specific RAN
+func RanGNbIdGet(c *gin.Context) {
+	gNBId:=c.Param("gNbId")
+	fmt.Printf("Got gNbId:%v\n",gNBId)
+
+	for _, v := range RANs {
+		if v.RanId.GNbId.GNBValue == gNBId {
+			c.JSON(http.StatusOK, v)
+			return
+		}
+	}
+	c.JSON(http.StatusNotFound, gin.H{})
 }
