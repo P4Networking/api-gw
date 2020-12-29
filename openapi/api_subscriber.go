@@ -22,15 +22,12 @@ import (
 func SubscriberUeIdServingPlmnIdDelete(c *gin.Context) {
 	UEId := c.Param("ueId")
 
-	servingPLMNId, err := strconv.ParseInt(c.Param("servingPlmnId"), 10, 32)
-	if err != nil {
-		panic(err)
-	}
+	servingPLMNId:=c.Param("servingPlmnId")
 
 	fmt.Printf("Got UE ID: %v, serving PLMN ID: %v\n", UEId, servingPLMNId)
 
 	for k, v := range Subscribers {
-		if v.UeId == UEId && v.PlmnId == int32(servingPLMNId) {
+		if v.UeId == UEId && v.PlmnId == servingPLMNId {
 			//Copy last value to cover this one
 			Subscribers[k] = Subscribers[len(Subscribers)-1]
 			// Erase last one value
@@ -52,15 +49,12 @@ func SubscriberGet(c *gin.Context) {
 func SubscriberUeIdServingPlmnIdGet(c *gin.Context) {
 	UEId := c.Param("ueId")
 
-	servingPLMNId, err := strconv.ParseInt(c.Param("servingPlmnId"), 10, 32)
-	if err != nil {
-		panic(err)
-	}
+	servingPLMNId:=c.Param("servingPlmnId")
 
 	fmt.Printf("Got UE ID: %v, serving PLMN ID: %v\n", UEId, servingPLMNId)
 
 	for _, v := range Subscribers {
-		if v.UeId == UEId && v.PlmnId == int32(servingPLMNId) {
+		if v.UeId == UEId && v.PlmnId == servingPLMNId {
 			c.JSON(http.StatusOK, v)
 			return
 		}

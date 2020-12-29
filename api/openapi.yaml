@@ -74,8 +74,7 @@ paths:
         name: servingPlmnId
         required: true
         schema:
-          format: int32
-          type: integer
+          type: string
         style: simple
       responses:
         "400":
@@ -101,8 +100,7 @@ paths:
         name: servingPlmnId
         required: true
         schema:
-          format: int32
-          type: integer
+          type: string
         style: simple
       responses:
         "200":
@@ -130,8 +128,7 @@ paths:
         name: servingPlmnId
         required: true
         schema:
-          format: int32
-          type: integer
+          type: string
         style: simple
       requestBody:
         content:
@@ -605,7 +602,7 @@ components:
               snssai:
                 sd: sd
                 sst: 188
-        plmnId: 0
+        plmnId: plmnId
         accessAndMobilitySubscriptionData:
           supportedFeatures: supportedFeatures
           mcsPriority: true
@@ -677,7 +674,7 @@ components:
           - subscCats
       properties:
         plmnId:
-          type: integer
+          type: string
         ueId:
           type: string
         authenticationSubscription:

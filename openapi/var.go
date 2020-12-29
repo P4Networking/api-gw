@@ -8,7 +8,7 @@ var (
 )
 
 type UE struct {
-	PlmnId int32 `json:"plmnId,omitempty"`
+	PlmnId string `json:"plmnId,omitempty"`
 
 	UeId string `json:"ueId,omitempty"`
 

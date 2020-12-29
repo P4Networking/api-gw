@@ -28,10 +28,10 @@ func RegisteredUeContextGet(c *gin.Context) {
 					ueCtxs = append(ueCtxs, UeContext{
 						AccessType:  "3GPP_ACCESS",
 						Supi:        subs.UeId,
-						Guti:        strconv.Itoa(int(v.PlmnId))+"cafe0000000"+v.UeId[len(v.UeId)-2:],
-						Mcc:         strconv.Itoa(int(v.PlmnId))[:3],
-						Mnc:         strconv.Itoa(int(v.PlmnId))[3:],
-						Tac:         strconv.Itoa(int(subs.PlmnId)),
+						Guti:        v.PlmnId+"cafe0000000"+v.UeId[len(v.UeId)-2:],
+						Mcc:         v.PlmnId[:3],
+						Mnc:         v.PlmnId[3:],
+						Tac:         subs.PlmnId,
 						PduSessions: []UeContextPduSessions{{
 							PduSessionId: "1",
 							SmContextRef: "urn:uuid:a37b276f-d8d2-4ad6-afd1-f3cb60ff1a80",
@@ -61,10 +61,10 @@ func RegisteredUeContextSupiGet(c *gin.Context) {
 					ueCtxs = append(ueCtxs, UeContext{
 						AccessType:  "3GPP_ACCESS",
 						Supi:        subs.UeId,
-						Guti:        strconv.Itoa(int(v.PlmnId))+"cafe0000000"+v.UeId[len(v.UeId)-2:],
-						Mcc:         strconv.Itoa(int(v.PlmnId))[:3],
-						Mnc:         strconv.Itoa(int(v.PlmnId))[3:],
-						Tac:         strconv.Itoa(int(subs.PlmnId)),
+						Guti:        v.PlmnId+"cafe0000000"+v.UeId[len(v.UeId)-2:],
+						Mcc:         v.PlmnId[:3],
+						Mnc:         v.PlmnId[3:],
+						Tac:         subs.PlmnId,
 						PduSessions: []UeContextPduSessions{{
 							PduSessionId: "1",
 							SmContextRef: "urn:uuid:a37b276f-d8d2-4ad6-afd1-f3cb60ff1a80",
